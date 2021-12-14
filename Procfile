@@ -1,1 +1,1 @@
-web: python FinTech_Final_Project.ipynb
+web: python fintech_final_project.py
