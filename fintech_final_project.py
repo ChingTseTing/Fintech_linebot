@@ -17,7 +17,6 @@ Line Bot聊天機器人
 第一章 Line Bot申請與串接
 Line Bot機器人串接與測試
 """
-!pip install line-bot-sdk
 #載入LineBot所需要的套件
 from flask import Flask, request, abort
 
