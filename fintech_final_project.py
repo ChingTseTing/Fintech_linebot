@@ -85,8 +85,8 @@ def handle_message(event):
     message = TextSendMessage(text=event.message.text)
 
     try: 
-      tmp = get_stock( message )
-      image_message_url = stock_plot( tmp['Close'] , message)
+      tmp = get_stock( event.message.text )
+      image_message_url = stock_plot( tmp['Close'] , event.message.text)
       image_message = ImageSendMessage(original_content_url=image_message_url ,preview_image_url = image_message_url)
       line_bot_api.reply_message(event.reply_token, image_message)
 
