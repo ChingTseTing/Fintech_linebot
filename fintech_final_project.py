@@ -86,13 +86,14 @@ def handle_message(event):
 
     try: 
       tmp = get_stock( event.message.text )
-      image_message_url = stock_plot( tmp['Close'] , event.message.text)
-      image_message = ImageSendMessage(original_content_url=image_message_url ,preview_image_url = image_message_url)
-      line_bot_api.reply_message(event.reply_token, image_message)
-
+      if len(tmp)!=0:
+        image_message_url = stock_plot( tmp['Close'] , event.message.text)
+        image_message = ImageSendMessage(original_content_url=image_message_url ,preview_image_url = image_message_url)
+        line_bot_api.reply_message(event.reply_token, image_message)
+      else:
+        line_bot_api.reply_message(event.reply_token,TextSendMessage(text="額..我找不到"))
     except:
       line_bot_api.reply_message(event.reply_token,message)
-
 
 
 #主程式
