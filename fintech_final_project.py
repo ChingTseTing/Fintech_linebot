@@ -89,7 +89,6 @@ def handle_message(event):
       if len(tmp)!=0:
         image_message_url = stock_plot( tmp['Close'] , event.message.text)
         image_message = ImageSendMessage(original_content_url=image_message_url ,preview_image_url = image_message_url)
-        line_bot_api.reply_message(event.reply_token, image_message)
 
         buttons_template_message = TemplateSendMessage(
                 alt_text='這個看不到',
