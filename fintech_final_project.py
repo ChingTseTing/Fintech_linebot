@@ -91,49 +91,23 @@ def handle_message(event):
         image_message = ImageSendMessage(original_content_url=image_message_url ,preview_image_url = image_message_url)
         line_bot_api.reply_message(event.reply_token, image_message)
 
+        buttons_template_message = TemplateSendMessage(
+                alt_text='這個看不到',
+                template=ButtonsTemplate(
+                    thumbnail_image_url='https://i.imgur.com/wpM584d.jpg',
+                    title='行銷搬進大程式',
+                    text='選單功能－TemplateSendMessage',
+                    actions=[
+                        PostbackAction(
+                            label='偷偷傳資料',
+                            display_text='檯面上',
+                            data='action=檯面下'
+                        )
+                    ]
+                )
+            )
 
-
-
-        carousel_template_message = TemplateSendMessage(
-          alt_text='免費教學影片',
-          template=CarouselTemplate(
-              columns=[
-                  CarouselColumn(
-                      thumbnail_image_url='https://i.imgur.com/wpM584d.jpg',
-                      title='分析',
-                      text='萬丈高樓平地起',
-                      actions=[
-                          MessageAction(
-                              label='教學內容',
-                              text='拆解步驟詳細介紹安裝並使用Anaconda、Python、Spyder、VScode…'
-                          ),
-                          URIAction(
-                              label='馬上查看',
-                              uri='https://marketingliveincode.com/?page_id=270'
-                          )
-                      ]
-                  ),
-                  CarouselColumn(
-                      thumbnail_image_url='https://i.imgur.com/W7nI6fg.jpg',
-                      title='機器學習預測',
-                      text='台灣最廣泛使用的通訊軟體',
-                      actions=[
-                          MessageAction(
-                              label='教學內容',
-                              text='Line Bot申請與串接'
-                          ),
-                          URIAction(
-                              label='馬上查看',
-                              uri='https://marketingliveincode.com/?page_id=2532'
-                          )
-                      ]
-                  )
-              ]
-          )
-        )
-
-
-        line_bot_api.reply_message(event.reply_token, carousel_template_message)
+        line_bot_api.reply_message(event.reply_token, buttons_template_message)
 
     except:
       line_bot_api.reply_message(event.reply_token,TextSendMessage(text="額..我找不到"))
