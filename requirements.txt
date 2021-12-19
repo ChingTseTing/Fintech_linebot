@@ -12,3 +12,5 @@ yfinance
 pyimgur
 seaborn
 mpl_finance
+oauth2client
+gspread
