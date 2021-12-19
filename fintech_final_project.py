@@ -79,6 +79,11 @@ def handle_follow(event):
     line_bot_api.reply_message( event.reply_token,TextSendMessage(text="你好")  )
 
  
+# postback事件
+@handler.add(PostbackEvent)
+def handle_postback(event):
+    line_bot_api.reply_message( event.reply_token,TextSendMessage(text=  event.postback.data     )  )
+
 # 文字事件
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
@@ -109,7 +114,7 @@ def handle_message(event):
                                 label='教學內容',
                                 text='教學內容'
                             ),
-                     
+                         
                             PostbackAction(label='ping with text', data='ping1', text='ping2')
                         ]
                     ),
