@@ -134,8 +134,8 @@ def handle_message(event):
                         ]
                     ),
                     CarouselColumn(
-                        thumbnail_image_url='https://i.imgur.com/l7rzfIK.jpg',
-                        title='Telegram Bot聊天機器人',
+                        thumbnail_image_url='https://i.imgur.com/OknnRE3.png',
+                        title='回饋表單',
                         text='唯有真正的方便，能帶來意想不到的價值',
                         actions=[
                             MessageAction(
