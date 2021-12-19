@@ -78,27 +78,27 @@ richmenu_1 = RichMenu(
     chat_bar_text="功能選單",
     areas=[RichMenuArea(
         bounds=RichMenuBounds(x=0, y=0, width=2500/3, height=843),
-        action=MessageAction(label='即時查詢',text='即時查詢建置中')
+        action=PostbackAction(label='即時查詢', data='即時查詢建置中', text='即時查詢')
         ),
         RichMenuArea(
         bounds=RichMenuBounds(x=2500/3, y=0, width=2500/3, height=843),
-        action=MessageAction(label='歷史資料',text='歷史資料建置中')
+        action=PostbackAction(label='歷史資料', data='歷史資料建置中', text='歷史資料')
         ),
         RichMenuArea(
         bounds=RichMenuBounds(x=2500*2/3, y=0, width=2500/3, height=843),
-        action=MessageAction(label='技術分析',text='技術分析建置中')
+        action=PostbackAction(label='技術分析', data='技術分析建置中', text='技術分析')
         ),
         RichMenuArea(
         bounds=RichMenuBounds(x=0, y=843, width=2500/3, height=843),
-        action=MessageAction(label='機器學習預測',text='機器學習預測建置中')
+        action=PostbackAction(label='機器學習預測', data='機器學習預測建置中', text='機器學習預測')
         ),
         RichMenuArea(
         bounds=RichMenuBounds(x=2500/3, y=843, width=2500/3, height=843),
-        action=MessageAction(label='最新消息',text='最新消息建置中')
+        action=PostbackAction(label='最新消息', data='最新消息建置中', text='最新消息')
         ),
         RichMenuArea(
         bounds=RichMenuBounds(x=2500*2/3, y=843, width=2500/3, height=843),
-        action=MessageAction(label='意見回饋',text='意見回饋建置中')
+        action=PostbackAction(label='意見回饋', data='意見回饋建置中', text='意見回饋')
         )
     ]
 )
@@ -119,7 +119,7 @@ def handle_follow(event):
 # postback事件
 @handler.add(PostbackEvent)
 def handle_postback(event):
-    line_bot_api.reply_message( event.reply_token,TextSendMessage(text=  event.postback.data     )  )
+    line_bot_api.reply_message( event.reply_token,TextSendMessage(text= event.postback.data ) )
 
 # 文字事件
 @handler.add(MessageEvent, message=TextMessage)
