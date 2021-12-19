@@ -109,10 +109,7 @@ def handle_message(event):
                                 label='教學內容',
                                 text='教學內容'
                             ),
-                            URIAction(
-                                label='馬上查看',
-                                uri='https://marketingliveincode.com/?page_id=270'
-                            ),
+                     
                             PostbackAction(label='ping with text', data='ping1', text='ping2')
                         ]
                     ),
