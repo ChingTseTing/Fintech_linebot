@@ -134,7 +134,7 @@ def handle_message(event):
                         ]
                     ),
                     CarouselColumn(
-                        thumbnail_image_url='https://i.imgur.com/OknnRE3.png',
+                        thumbnail_image_url='https://i.imgur.com/6xRGc06.png',
                         title='回饋表單',
                         text='唯有真正的方便，能帶來意想不到的價值',
                         actions=[
