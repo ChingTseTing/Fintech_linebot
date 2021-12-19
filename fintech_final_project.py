@@ -78,27 +78,27 @@ richmenu_1 = RichMenu(
     chat_bar_text="功能選單",
     areas=[RichMenuArea(
         bounds=RichMenuBounds(x=0, y=0, width=2500/3, height=843),
-        action=MessageAction(label='技術面分析',text='技術面分析1')
+        action=MessageAction(label='即時查詢',text='即時查詢建置中')
         ),
         RichMenuArea(
         bounds=RichMenuBounds(x=2500/3, y=0, width=2500/3, height=843),
-        action=MessageAction(label='最新消息',text='最新消息1')
+        action=MessageAction(label='歷史資料',text='歷史資料建置中')
         ),
         RichMenuArea(
         bounds=RichMenuBounds(x=2500*2/3, y=0, width=2500/3, height=843),
-        action=MessageAction(label='意見回饋',text='意見回饋1')
+        action=MessageAction(label='技術分析',text='技術分析建置中')
         ),
         RichMenuArea(
         bounds=RichMenuBounds(x=0, y=843, width=2500/3, height=843),
-        action=MessageAction(label='即時查詢',text='即時查詢1')
+        action=MessageAction(label='機器學習預測',text='機器學習預測建置中')
         ),
         RichMenuArea(
         bounds=RichMenuBounds(x=2500/3, y=843, width=2500/3, height=843),
-        action=MessageAction(label='歷史資料查詢',text='歷史資料查詢1')
+        action=MessageAction(label='最新消息',text='最新消息建置中')
         ),
         RichMenuArea(
         bounds=RichMenuBounds(x=2500*2/3, y=843, width=2500/3, height=843),
-        action=MessageAction(label='機器學習預測',text='機器學習預測1')
+        action=MessageAction(label='意見回饋',text='意見回饋建置中')
         )
     ]
 )
