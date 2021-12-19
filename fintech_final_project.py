@@ -30,6 +30,22 @@ line_bot_api = LineBotApi('kiO7NFLfre4p/DYSzSC3tO9TcYfkX/W8z5y3l2NI0EVG4w1bGQnG2
 handler = WebhookHandler('87723191543af71cbeb3eb10170ba058')
 # line_bot_api.push_message('U98f95fa0a1fd644fd3c8ce928f9f1eb4', TextSendMessage(text='你可以開始了'))
 
+# 監聽所有來自 /callback 的 Post Request
+@app.route("/callback", methods=['POST'])
+def callback():
+    # get X-Line-Signature header value
+    signature = request.headers['X-Line-Signature']
+    # get request body as text
+    body = request.get_data(as_text=True)
+    app.logger.info("Request body: " + body)
+
+    # handle webhook body
+    try:
+        handler.handle(body, signature)
+    except InvalidSignatureError:
+        abort(400)
+
+    return 'OK'
 
 # 功能模組-畫圖
 def stock_plot( dataframe , msg ):
@@ -54,24 +70,45 @@ def get_stock(stock_id ):
   tmp = yf.download(stock_id , period='3y',interval='1d' )# start='2016-01-01',end=datetime.now().strftime('%Y-%m-%d')
   return tmp
 
+# rich menu 功能選單設置 
+richmenu_1 = RichMenu(
+    size=RichMenuSize(width=2500, height=1686),
+    selected=False,
+    name="richmenu_1",
+    chat_bar_text="功能選單",
+    areas=[RichMenuArea(
+        bounds=RichMenuBounds(x=0, y=0, width=2500/3, height=843),
+        action=MessageAction(label='技術面分析',text='技術面分析1')
+        ),
+        RichMenuArea(
+        bounds=RichMenuBounds(x=2500/3, y=0, width=2500/3, height=843),
+        action=MessageAction(label='最新消息',text='最新消息1')
+        ),
+        RichMenuArea(
+        bounds=RichMenuBounds(x=2500*2/3, y=0, width=2500/3, height=843),
+        action=MessageAction(label='意見回饋',text='意見回饋1')
+        ),
+        RichMenuArea(
+        bounds=RichMenuBounds(x=0, y=843, width=2500/3, height=843),
+        action=MessageAction(label='即時查詢',text='即時查詢1')
+        ),
+        RichMenuArea(
+        bounds=RichMenuBounds(x=2500/3, y=843, width=2500/3, height=843),
+        action=MessageAction(label='歷史資料查詢',text='歷史資料查詢1')
+        ),
+        RichMenuArea(
+        bounds=RichMenuBounds(x=2500*2/3, y=843, width=2500/3, height=843),
+        action=MessageAction(label='機器學習預測',text='機器學習預測1')
+        )
+    ]
+)
+rich_menu_id = line_bot_api.create_rich_menu(rich_menu=richmenu_1)
 
+with open(    os.path.join( os.path.dirname(__file__) ,"richmenu_1.png" )  , 'rb') as f:
+    line_bot_api.set_rich_menu_image( rich_menu_id, 'image/png', f)
 
-# 監聽所有來自 /callback 的 Post Request
-@app.route("/callback", methods=['POST'])
-def callback():
-    # get X-Line-Signature header value
-    signature = request.headers['X-Line-Signature']
-    # get request body as text
-    body = request.get_data(as_text=True)
-    app.logger.info("Request body: " + body)
+line_bot_api.set_default_rich_menu(rich_menu_id)
 
-    # handle webhook body
-    try:
-        handler.handle(body, signature)
-    except InvalidSignatureError:
-        abort(400)
-
-    return 'OK'
 
 # 加入好友事件
 @handler.add(FollowEvent)
