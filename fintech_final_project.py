@@ -113,7 +113,8 @@ def handle_message(event):
                             URIAction(
                                 label='馬上查看',
                                 uri='https://marketingliveincode.com/?page_id=270'
-                            )
+                            ),
+                            PostbackAction(label='ping with text', data='ping1', text='ping2')
                         ]
                     ),
                     CarouselColumn(
