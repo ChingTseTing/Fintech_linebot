@@ -73,12 +73,6 @@ def callback():
 
     return 'OK'
 
-# 加入好友事件
-@handler.add(FollowEvent)
-def handle_follow(event):
-    line_bot_api.reply_message( event.reply_token,TextSendMessage(text="你好")  )
-
- 
 
 # 文字事件
 @handler.add(MessageEvent, message=TextMessage)
@@ -152,11 +146,6 @@ def handle_message(event):
         )
 
 
-
-
-
-
-
         output.append(carousel_template_message)
 
         line_bot_api.reply_message(event.reply_token, output)
@@ -164,6 +153,16 @@ def handle_message(event):
     except:
       line_bot_api.reply_message(event.reply_token,TextSendMessage(text="額..我找不到"))
 
+# 加入好友事件
+@handler.add(FollowEvent)
+def handle_follow(event):
+    line_bot_api.reply_message( event.reply_token,TextSendMessage(text="你好")  )
+
+  
+# postback事件
+@handler.add(PostbackEvent)
+def handle_postback(event):
+    line_bot_api.reply_message( event.reply_token,TextSendMessage(text=  event.postback.data )  )
 
 
 
