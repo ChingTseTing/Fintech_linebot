@@ -297,7 +297,7 @@ def handle_image(event):
 
 @handler.add(PostbackEvent)
 def handle_postback(event):
-    if event.postback.data.split('=')[0] is not 'second_tone' :  # not event.postback.data.startswith('second_tone='): 
+    if not event.postback.data.startswith('second_tone='): 
         phase_intermediate(event, 'user_dualtone_settings')
     else:
         phase_finish(event, 'user_dualtone_settings')
