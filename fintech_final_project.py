@@ -217,9 +217,9 @@ def phase_start(event, TABLE_NAME):
 def phase_intermediate(event , TABLE_NAME ):
 
 
-    record = update_record(event.source.user_id, event.postback_data.split('=')[0] , event.postback_data.split('=')[1] , TABLE_NAME )
+    record = update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
 
-    if postback_data.split('=')[0]=="period":
+    if event.postback.data.split('=')[0]=="period":
       mode_dict = {'1m':'1分','15m':'15分','60m':'60分','90m':'90分','1h':'1小時','1d':'1天','5d':'5天','1wk':'1週','1mo':'1個月','3mo':'3個月'}
       line_bot_api.reply_message(
           event.reply_token,
@@ -234,7 +234,7 @@ def phase_intermediate(event , TABLE_NAME ):
               )
           )
       )
-    if postback_data.split('=')[0]=="interval":
+    if event.postback.data.split('=')[0]=="interval":
 
         line_bot_api.reply_message(
             event.reply_token,
