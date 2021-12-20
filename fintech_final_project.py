@@ -127,17 +127,19 @@ def init_table(TABLE_NAME):
     table_records = [i[0] for i in table_records]
 
     if TABLE_NAME not in table_records:
+
         create_table_query = """CREATE TABLE """+ TABLE_NAME +""" (
             user_id VARCHAR ( 50 ) PRIMARY KEY,
             message_id VARCHAR ( 50 ) NOT NULL,
-            mode VARCHAR ( 20 ) NOT NULL,
-            gradient_factor VARCHAR ( 20 ) NOT NULL,
-            first_tone VARCHAR ( 20 ) NOT NULL,
-            second_tone VARCHAR ( 20 ) NOT NULL
+            stock VARCHAR ( 20 ) NOT NULL,
+            period VARCHAR ( 20 ) NOT NULL,
+            interval VARCHAR ( 20 ) NOT NULL,
         );"""
 
         cursor.execute(create_table_query)
         conn.commit()
+
+
 
     return True
 
@@ -153,9 +155,9 @@ def drop_table(TABLE_NAME):
 
 def init_record(user_id, message_id, TABLE_NAME):
     conn, cursor = access_database()
-    table_columns = '(user_id, message_id, mode, gradient_factor, first_tone, second_tone)'
-    postgres_insert_query = "INSERT INTO "+ TABLE_NAME + f" {table_columns} VALUES (%s,%s,%s,%s,%s,%s)"
-    record = (user_id, message_id, 'blend', '50', 'red', 'blue')
+    table_columns = '(user_id, message_id, stock, period, interval)'
+    postgres_insert_query = "INSERT INTO "+ TABLE_NAME + f" {table_columns} VALUES (%s,%s,%s,%s,%s)"
+    record = (user_id, message_id, '2330.TW', '3y', '1d')
     cursor.execute(postgres_insert_query, record)
     conn.commit()
     cursor.close()
@@ -195,88 +197,58 @@ def phase_start(event, TABLE_NAME):
     else:
         _ = init_record(event.source.user_id, event.message.id , TABLE_NAME)
 
-    mode_dict = {'blend': '線性疊圖', 'composite': '濾鏡疊圖', 'composite_invert': '反式濾鏡疊圖'}
+
+    update_record(event.source.user_id, "stock", event.message.text , TABLE_NAME )
+
+    mode_dict = {'1d':'1天','5d':'5天','1mo':'1個月','3mo':'3個月','6mo':'6個月','1y':'1年','3y':'3年','5y':'5年','10y':'10年'}
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(
-            text=f"[1/4] 今晚，我想來點雙色打光！\n請選擇雙色打光模式：", 
+            text=f"請選擇日期範圍", 
             quick_reply=QuickReply(
                 items=[QuickReplyButton(action=PostbackAction(
                     label=v, 
-                    display_text=f'打光模式：{v}',
-                    data=f'mode={k}')) for k, v in mode_dict.items()
+                    display_text=f'日期範圍：{v}',
+                    data=f'period={k}')) for k, v in mode_dict.items()
                 ]
             )
         )
     )
 def phase_intermediate(event , TABLE_NAME ):
 
-    color_dict = {
-        'red': '紅',
-        'orange': '橙',
-        'yellow': '黃',
-        'green': '綠',
-        'blue': '藍',
-        'purple': '紫'
-    }
-                  
-    reply_dict = {
-        'mode': '[2/4] 今晚，繼續來點雙色打光！\n請選擇色彩變化梯度：',
-        'gradient_factor': '[3/4] 今晚，還想來點雙色打光！\n請選擇第一道色彩：',
-        'first_tone': '[4/4] 今晚，最後來點雙色打光！\n請選擇第二道色彩：'
-    }
-    
-    quick_button_dict = {
-        'mode': 
-        [QuickReplyButton(
-            action=PostbackAction(
-                label=i, 
-                display_text=f'變化梯度：{i}', 
-                data=f'gradient_factor={i}')) for i in (5, 10, 50, 100)
-        ],
-        'gradient_factor': 
-        [QuickReplyButton(
-            action=PostbackAction(
-                label=j, 
-                display_text=f'第一道色彩：{j}', 
-                data=f'first_tone={i}')) for i, j in color_dict.items()
-        ],
-        'first_tone':
-        [QuickReplyButton(
-            action=PostbackAction(
-                label=j, 
-                display_text=f'第二道色彩：{j}', 
-                data=f'second_tone={i}')) for i, j in color_dict.items()
-        ]
-    }
-    
-    user_id = event.source.user_id
-    postback_data = event.postback.data  #   event.postback.data.split('=')[0] 
-    current_phase = postback_data.split('=')[0]
 
-    # 依照使用者的選擇更新資料
-    update_record(user_id, current_phase, postback_data.split('=')[1] , TABLE_NAME )
-    
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(
-            text=reply_dict[current_phase],
-            quick_reply=QuickReply(
-                items=quick_button_dict[current_phase]))
+    update_record(event.source.user_id, postback_data.split('=')[0] , postback_data.split('=')[1] , TABLE_NAME )
+
+    if postback_data.split('=')[0]=="period":
+      mode_dict = {'1m':'1分','15m':'15分','60m':'60分','90m':'90分','1h':'1小時','1d':'1天','5d':'5天','1wk':'1週','1mo':'1個月','3mo':'3個月'}
+      line_bot_api.reply_message(
+          event.reply_token,
+          TextSendMessage(
+              text=f"請選擇數據頻率", 
+              quick_reply=QuickReply(
+                  items=[QuickReplyButton(action=PostbackAction(
+                      label=v, 
+                      display_text=f'日期範圍：{v}',
+                      data=f'interval={k}')) for k, v in mode_dict.items()
+                  ]
+              )
+          )
+      )
+    if postback_data.split('=')[0]=="period":
+
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=str(record))
         )
-    
-def phase_finish(event , TABLE_NAME ):
-    user_id = event.source.user_id
-    postback_data = event.postback.data
-    current_phase = postback_data.split('=')[0]
+        
+# def phase_finish(event , TABLE_NAME ):
+#     user_id = event.source.user_id
+#     postback_data = event.postback.data
+#     current_phase = postback_data.split('=')[0]
 
-    # 更新資料並取得最後的完整設定
-    record = update_record(user_id, current_phase, postback_data.split('=')[1] , TABLE_NAME )
+#     # 更新資料並取得最後的完整設定
+#     record = update_record(user_id, current_phase, postback_data.split('=')[1] , TABLE_NAME )
 
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=str(record))
-    )
 
 
 
@@ -291,19 +263,16 @@ def handle_message(event):
     message = TextSendMessage(text=event.message.text)
     
       
-    if len(get_stock(event.message.text ))!=0:
-      phase_start(event, 'user_dualtone_settings')
+    if len(get_stock(event.message.text))!=0:
+      phase_start(event, 'technical_analysis')
 
 
 # postback event事件
 @handler.add(PostbackEvent)
 def handle_postback(event):
  
-    if event.postback.data.startswith('mode=') or event.postback.data.startswith('gradient_factor=') or event.postback.data.startswith('first_tone=') :
-        phase_intermediate(event, 'user_dualtone_settings')
-
-    if event.postback.data.startswith('second_tone='):
-        phase_finish(event, 'user_dualtone_settings')
+    if event.postback.data.startswith('period=') or event.postback.data.startswith('interval=')  :
+        phase_intermediate(event, 'technical_analysis')
 
 
 
