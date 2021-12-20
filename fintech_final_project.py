@@ -118,16 +118,16 @@ def access_database():
     cursor = conn.cursor()
     return conn, cursor
 
-####  CallDatabase
-def init_table():
+####  CallDatabase  TABLE_NAME(a string) replace user_dualtone_settings
+def init_table(TABLE_NAME):
     conn, cursor = access_database()
     postgres_table_query = "SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema'"
     cursor.execute(postgres_table_query)
     table_records = cursor.fetchall()
     table_records = [i[0] for i in table_records]
 
-    if 'user_dualtone_settings' not in table_records:
-        create_table_query = """CREATE TABLE user_dualtone_settings (
+    if TABLE_NAME not in table_records:
+        create_table_query = """CREATE TABLE """+ TABLE_NAME +""" (
             user_id VARCHAR ( 50 ) PRIMARY KEY,
             message_id VARCHAR ( 50 ) NOT NULL,
             mode VARCHAR ( 20 ) NOT NULL,
@@ -141,9 +141,9 @@ def init_table():
 
     return True
 
-def drop_table():
+def drop_table(TABLE_NAME):
   conn, cursor = access_database()
-  delete_table_query = '''DROP TABLE IF EXISTS user_dualtone_settings'''
+  delete_table_query = '''DROP TABLE IF EXISTS ''' + TABLE_NAME
   cursor.execute(delete_table_query)
   conn.commit()
   cursor.close()
@@ -151,10 +151,10 @@ def drop_table():
   return True
 
 
-def init_record(user_id, message_id):
+def init_record(user_id, message_id, TABLE_NAME):
     conn, cursor = access_database()
     table_columns = '(user_id, message_id, mode, gradient_factor, first_tone, second_tone)'
-    postgres_insert_query = f"INSERT INTO user_dualtone_settings {table_columns} VALUES (%s,%s,%s,%s,%s,%s)"
+    postgres_insert_query = "INSERT INTO "+ TABLE_NAME + f" {table_columns} VALUES (%s,%s,%s,%s,%s,%s)"
     record = (user_id, message_id, 'blend', '50', 'red', 'blue')
     cursor.execute(postgres_insert_query, record)
     conn.commit()
@@ -162,43 +162,38 @@ def init_record(user_id, message_id):
     conn.close()
     return record
 
-def check_record(user_id):
+def check_record(user_id, TABLE_NAME):
     conn, cursor = access_database()
-    postgres_select_query = f"SELECT * FROM user_dualtone_settings WHERE user_id = '{user_id}';"
+    postgres_select_query = "SELECT * FROM "+ TABLE_NAME + f" WHERE user_id = '{user_id}';"
     cursor.execute(postgres_select_query)
     user_settings = cursor.fetchone()
     return user_settings
 
 
-def update_record(user_id, col, value):
+def update_record(user_id, col, value, TABLE_NAME):
     conn, cursor = access_database()
-
-    postgres_update_query = f"UPDATE user_dualtone_settings SET {col} = %s WHERE user_id = %s"
+    postgres_update_query = "UPDATE " + TABLE_NAME +f" SET {col} = %s WHERE user_id = %s"
     cursor.execute(postgres_update_query, (value, user_id))
     conn.commit()
-
-    postgres_select_query = f"SELECT * FROM user_dualtone_settings WHERE user_id = '{user_id}';"
-
+    postgres_select_query = "SELECT * FROM "+ TABLE_NAME + f" WHERE user_id = '{user_id}';"
     cursor.execute(postgres_select_query)
     user_settings = cursor.fetchone()
-
     cursor.close()
     conn.close()
-
     return user_settings
 
 
 ##  AlmaTalks.py
 
-def phase_start(event):
+def phase_start(event, TABLE_NAME):
     # 初始化表格
-    init_table()
+    init_table(TABLE_NAME)
 
     # 檢查使用者資料是否存在
-    if check_record(event.source.user_id):
-        _ = update_record(event.source.user_id, 'message_id', event.message.id)
+    if check_record(event.source.user_id , TABLE_NAME ):
+        _ = update_record(event.source.user_id, 'message_id', event.message.id , TABLE_NAME)
     else:
-        _ = init_record(event.source.user_id, event.message.id)
+        _ = init_record(event.source.user_id, event.message.id , TABLE_NAME)
 
     mode_dict = {'blend': '線性疊圖', 'composite': '濾鏡疊圖', 'composite_invert': '反式濾鏡疊圖'}
     line_bot_api.reply_message(
@@ -214,7 +209,7 @@ def phase_start(event):
             )
         )
     )
-def phase_intermediate(event):
+def phase_intermediate(event , TABLE_NAME ):
 
     color_dict = {
         'red': '紅',
@@ -260,7 +255,7 @@ def phase_intermediate(event):
     current_phase = postback_data.split('=')[0]
 
     # 依照使用者的選擇更新資料
-    update_record(user_id, current_phase, postback_data.split('=')[1])
+    update_record(user_id, current_phase, postback_data.split('=')[1] , TABLE_NAME )
     
     line_bot_api.reply_message(
         event.reply_token,
@@ -270,13 +265,13 @@ def phase_intermediate(event):
                 items=quick_button_dict[current_phase]))
         )
     
-def phase_finish(event):
+def phase_finish(event , TABLE_NAME ):
     user_id = event.source.user_id
     postback_data = event.postback.data
     current_phase = postback_data.split('=')[0]
 
     # 更新資料並取得最後的完整設定
-    record = update_record(user_id, current_phase, postback_data.split('=')[1])
+    record = update_record(user_id, current_phase, postback_data.split('=')[1] , TABLE_NAME )
 
     line_bot_api.reply_message(
         event.reply_token,
@@ -285,7 +280,15 @@ def phase_finish(event):
 
 
 
+# 加入好友事件
+@handler.add(FollowEvent)
+def handle_follow(event):
+    line_bot_api.reply_message( event.reply_token,TextSendMessage(text="你好")  )
 
+# 文字事件
+@handler.add(MessageEvent, message=TextMessage)
+def handle_message(event):
+    message = TextSendMessage(text=event.message.text)
 
 
 @handler.add(MessageEvent, message=ImageMessage)
@@ -298,6 +301,8 @@ def handle_postback(event):
         phase_intermediate(event)
     else:
         phase_finish(event)
+
+
 
 #主程式
 if __name__ == "__main__":
