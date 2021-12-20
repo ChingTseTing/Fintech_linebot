@@ -291,7 +291,7 @@ def handle_message(event):
     message = TextSendMessage(text=event.message.text)
     
       
-    if get_stock(stock_id )!=0:
+    if get_stock(event.message.text )!=0:
       phase_start(event, 'user_dualtone_settings')
 
 
