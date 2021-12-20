@@ -1,7 +1,4 @@
-
-
-
-s# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #載入LineBot所需要的套件
 from flask import Flask, request, abort
 
@@ -22,8 +19,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials as SAC
-import psycopg2
-import talib as ta
 
 
 
@@ -115,14 +110,6 @@ with open(    os.path.join( os.path.dirname(__file__) ,"richmenu_1.png" )  , 'rb
 line_bot_api.set_default_rich_menu(rich_menu_id)
 
 
-
-
-
-
-
-
-
-
 # 加入好友事件
 @handler.add(FollowEvent)
 def handle_follow(event):
@@ -132,87 +119,75 @@ def handle_follow(event):
 # postback事件
 @handler.add(PostbackEvent)
 def handle_postback(event):
-    if event.postback.data == 'datetime_postback':
-      line_bot_api.reply_message( event.reply_toksen, TextSendMessage(text=event.postback.params['datetime']))
-    # line_bot_api.reply_message( event.reply_token,TextSendMessage(text= event.postback.data ) )
+    line_bot_api.reply_message( event.reply_token,TextSendMessage(text= event.postback.data ) )
 
 # 文字事件
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     message = TextSendMessage(text=event.message.text)
-    buttons_template_message = TemplateSendMessage(
-         alt_text='這個看不到',
-         template=ButtonsTemplate(
-             thumbnail_image_url='https://i.imgur.com/wpM584d.jpg',
-             title='行銷搬進大程式',
-             text='選單功能－TemplateSendMessage',
-             actions = [ DatetimePickerAction(label='datetime',data='datetime_postback',mode='datetime') ] 
 
-         )
-     )
-    line_bot_api.reply_message(event.reply_token, buttons_template_message)
-    # try: 
-    #   tmp = get_stock( event.message.text )
-    #   if len(tmp)!=0:
+    try: 
+      tmp = get_stock( event.message.text )
+      if len(tmp)!=0:
 
-    #     output = [] 
-    #     image_message_url = stock_plot( tmp['Close'] , event.message.text)
-    #     image_message = ImageSendMessage(original_content_url=image_message_url ,preview_image_url = image_message_url)
-    #     output.append(image_message)
+        output = [] 
+        image_message_url = stock_plot( tmp['Close'] , event.message.text)
+        image_message = ImageSendMessage(original_content_url=image_message_url ,preview_image_url = image_message_url)
+        output.append(image_message)
 
 
         
 
-    #     carousel_template_message = TemplateSendMessage(
-    #         alt_text='免費教學影片',
-    #         template=CarouselTemplate(
-    #             columns=[
-    #                 CarouselColumn(
-    #                     thumbnail_image_url='https://i.imgur.com/wpM584d.jpg',
-    #                     title='Python基礎教學',
-    #                     text='萬丈高樓平地起',
-    #                     actions=[
-    #                         MessageAction(
-    #                             label='教學內容',
-    #                             text='教學內容'
-    #                         ),
+        carousel_template_message = TemplateSendMessage(
+            alt_text='免費教學影片',
+            template=CarouselTemplate(
+                columns=[
+                    CarouselColumn(
+                        thumbnail_image_url='https://i.imgur.com/wpM584d.jpg',
+                        title='Python基礎教學',
+                        text='萬丈高樓平地起',
+                        actions=[
+                            MessageAction(
+                                label='教學內容',
+                                text='教學內容'
+                            ),
                          
-    #                         PostbackAction(label='ping with text', data='ping1', text='ping2')
-    #                     ]
-    #                 ),
-    #                 CarouselColumn(
-    #                     thumbnail_image_url='https://i.imgur.com/W7nI6fg.jpg',
-    #                     title='Line Bot聊天機器人',
-    #                     text='台灣最廣泛使用的通訊軟體',
-    #                     actions=[
-    #                         MessageAction(
-    #                             label='教學內容',
-    #                             text='Line Bot申請與串接'
-    #                         ),
-    #                         URIAction(
-    #                             label='馬上查看',
-    #                             uri='https://marketingliveincode.com/?page_id=2532'
-    #                         )
-    #                     ]
-    #                 ),
-    #                 CarouselColumn(
-    #                     thumbnail_image_url='https://i.imgur.com/6xRGc06.png',
-    #                     title='回饋表單',
-    #                     text='唯有真正的方便，能帶來意想不到的價值',
-    #                     actions=[
-    #                         MessageAction(
-    #                             label='教學內容',
-    #                             text='Telegrame申請與串接'
-    #                         ),
-    #                         URIAction(
-    #                             label='馬上查看',
-    #                             uri='https://marketingliveincode.com/?page_id=2648'
-    #                         )
-    #                     ]
-    #                 )
-    #             ]
-    #         )
-    #     )
+                            PostbackAction(label='ping with text', data='ping1', text='ping2')
+                        ]
+                    ),
+                    CarouselColumn(
+                        thumbnail_image_url='https://i.imgur.com/W7nI6fg.jpg',
+                        title='Line Bot聊天機器人',
+                        text='台灣最廣泛使用的通訊軟體',
+                        actions=[
+                            MessageAction(
+                                label='教學內容',
+                                text='Line Bot申請與串接'
+                            ),
+                            URIAction(
+                                label='馬上查看',
+                                uri='https://marketingliveincode.com/?page_id=2532'
+                            )
+                        ]
+                    ),
+                    CarouselColumn(
+                        thumbnail_image_url='https://i.imgur.com/6xRGc06.png',
+                        title='回饋表單',
+                        text='唯有真正的方便，能帶來意想不到的價值',
+                        actions=[
+                            MessageAction(
+                                label='教學內容',
+                                text='Telegrame申請與串接'
+                            ),
+                            URIAction(
+                                label='馬上查看',
+                                uri='https://marketingliveincode.com/?page_id=2648'
+                            )
+                        ]
+                    )
+                ]
+            )
+        )
 
 
 
@@ -220,15 +195,14 @@ def handle_message(event):
 
 
 
-    #     output.append(carousel_template_message)
+        output.append(carousel_template_message)
 
-    #     line_bot_api.reply_message(event.reply_token, output)
+        line_bot_api.reply_message(event.reply_token, output)
 
-#     except:
-#       line_bot_api.reply_message(event.reply_token,TextSendMessage(text="額..我找不到"))
+    except:
+      line_bot_api.reply_message(event.reply_token,TextSendMessage(text="額..我找不到"))
 
 
-#  action= DatetimePickerAction(label='datetime',data='datetime_postback',mode='datetime')),
 
 
 
