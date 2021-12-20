@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 #載入LineBot所需要的套件
 from flask import Flask, request, abort
@@ -111,112 +112,192 @@ with open(    os.path.join( os.path.dirname(__file__) ,"richmenu_1.png" )  , 'rb
 line_bot_api.set_default_rich_menu(rich_menu_id)
 
 
-
 def access_database():    
     DATABASE_URL = 'postgres://oslwzkeacbduvb:67563d43dd685b29d24491678f3956baab363d9ad65d1622cc7a8e4472a99940@ec2-34-226-178-146.compute-1.amazonaws.com:5432/d86a5ndsm3tor2'#'heroku config:get DATABASE_URL -a fintech-home23')'
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cursor = conn.cursor()
     return conn, cursor
 
+####  CallDatabase
+def init_table():
+    conn, cursor = access_database()
+    postgres_table_query = "SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema'"
+    cursor.execute(postgres_table_query)
+    table_records = cursor.fetchall()
+    table_records = [i[0] for i in table_records]
+
+    if 'user_dualtone_settings' not in table_records:
+        create_table_query = """CREATE TABLE user_dualtone_settings (
+            user_id VARCHAR ( 50 ) PRIMARY KEY,
+            message_id VARCHAR ( 50 ) NOT NULL,
+            mode VARCHAR ( 20 ) NOT NULL,
+            gradient_factor VARCHAR ( 20 ) NOT NULL,
+            first_tone VARCHAR ( 20 ) NOT NULL,
+            second_tone VARCHAR ( 20 ) NOT NULL
+        );"""
+
+        cursor.execute(create_table_query)
+        conn.commit()
+
+    return True
+
+def drop_table():
+  conn, cursor = access_database()
+  delete_table_query = '''DROP TABLE IF EXISTS user_dualtone_settings'''
+  cursor.execute(delete_table_query)
+  conn.commit()
+  cursor.close()
+  conn.close()
+  return True
 
 
+def init_record(user_id, message_id):
+    conn, cursor = access_database()
+    table_columns = '(user_id, message_id, mode, gradient_factor, first_tone, second_tone)'
+    postgres_insert_query = f"INSERT INTO user_dualtone_settings {table_columns} VALUES (%s,%s,%s,%s,%s,%s)"
+    record = (user_id, message_id, 'blend', '50', 'red', 'blue')
+    cursor.execute(postgres_insert_query, record)
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return record
 
-# 加入好友事件
-@handler.add(FollowEvent)
-def handle_follow(event):
-    line_bot_api.reply_message( event.reply_token,TextSendMessage(text="你好")  )
-
- 
-# postback事件
-@handler.add(PostbackEvent)
-def handle_postback(event):
-    # line_bot_api.reply_message( event.reply_token,TextSendMessage(text= event.postback.data ) )
-    if event.postback.data == 'datetime_postback':
-      line_bot_api.reply_message( event.reply_token, TextSendMessage(text=event.postback.params['datetime']))
-# 文字事件
-@handler.add(MessageEvent, message=TextMessage)
-def handle_message(event):
-    message = TextSendMessage(text=event.message.text)
-
-    try: 
-      tmp = get_stock( event.message.text )
-      if len(tmp)!=0:
-
-        output = [] 
-        image_message_url = stock_plot( tmp['Close'] , event.message.text)
-        image_message = ImageSendMessage(original_content_url=image_message_url ,preview_image_url = image_message_url)
-        output.append(image_message)
+def check_record(user_id):
+    conn, cursor = access_database()
+    postgres_select_query = f"SELECT * FROM user_dualtone_settings WHERE user_id = '{user_id}';"
+    cursor.execute(postgres_select_query)
+    user_settings = cursor.fetchone()
+    return user_settings
 
 
-        
+def update_record(user_id, col, value):
+    conn, cursor = access_database()
 
-        carousel_template_message = TemplateSendMessage(
-            alt_text='免費教學影片',
-            template=CarouselTemplate(
-                columns=[
-                    CarouselColumn(
-                        thumbnail_image_url='https://i.imgur.com/wpM584d.jpg',
-                        title='Python基礎教學',
-                        text='萬丈高樓平地起',
-                        actions=[
-                            MessageAction(
-                                label='教學內容',
-                                text='教學內容'
-                            ),
-                            DatetimePickerAction(label='datetime',data='datetime_postback',mode='datetime')
-                            # PostbackAction(label='ping with text', data='ping1', text='ping2')
-                        ]
-                    ),
-                    CarouselColumn(
-                        thumbnail_image_url='https://i.imgur.com/W7nI6fg.jpg',
-                        title='Line Bot聊天機器人',
-                        text='台灣最廣泛使用的通訊軟體',
-                        actions=[
-                            MessageAction(
-                                label='教學內容',
-                                text='Line Bot申請與串接'
-                            ),
-                            URIAction(
-                                label='馬上查看',
-                                uri='https://marketingliveincode.com/?page_id=2532'
-                            )
-                        ]
-                    ),
-                    CarouselColumn(
-                        thumbnail_image_url='https://i.imgur.com/6xRGc06.png',
-                        title='回饋表單',
-                        text='唯有真正的方便，能帶來意想不到的價值',
-                        actions=[
-                            MessageAction(
-                                label='教學內容',
-                                text='Telegrame申請與串接'
-                            ),
-                            URIAction(
-                                label='馬上查看',
-                                uri='https://marketingliveincode.com/?page_id=2648'
-                            )
-                        ]
-                    )
+    postgres_update_query = f"UPDATE user_dualtone_settings SET {col} = %s WHERE user_id = %s"
+    cursor.execute(postgres_update_query, (value, user_id))
+    conn.commit()
+
+    postgres_select_query = f"SELECT * FROM user_dualtone_settings WHERE user_id = '{user_id}';"
+
+    cursor.execute(postgres_select_query)
+    user_settings = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    return user_settings
+
+
+##  AlmaTalks.py
+
+def phase_start(event):
+    # 初始化表格
+    init_table()
+
+    # 檢查使用者資料是否存在
+    if check_record(event.source.user_id):
+        _ = update_record(event.source.user_id, 'message_id', event.message.id)
+    else:
+        _ = init_record(event.source.user_id, event.message.id)
+
+    mode_dict = {'blend': '線性疊圖', 'composite': '濾鏡疊圖', 'composite_invert': '反式濾鏡疊圖'}
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(
+            text=f"[1/4] 今晚，我想來點雙色打光！\n請選擇雙色打光模式：", 
+            quick_reply=QuickReply(
+                items=[QuickReplyButton(action=PostbackAction(
+                    label=v, 
+                    display_text=f'打光模式：{v}',
+                    data=f'mode={k}')) for k, v in mode_dict.items()
                 ]
             )
         )
+    )
+def phase_intermediate(event):
+
+    color_dict = {
+        'red': '紅',
+        'orange': '橙',
+        'yellow': '黃',
+        'green': '綠',
+        'blue': '藍',
+        'purple': '紫'
+    }
+                  
+    reply_dict = {
+        'mode': '[2/4] 今晚，繼續來點雙色打光！\n請選擇色彩變化梯度：',
+        'gradient_factor': '[3/4] 今晚，還想來點雙色打光！\n請選擇第一道色彩：',
+        'first_tone': '[4/4] 今晚，最後來點雙色打光！\n請選擇第二道色彩：'
+    }
+    
+    quick_button_dict = {
+        'mode': 
+        [QuickReplyButton(
+            action=PostbackAction(
+                label=i, 
+                display_text=f'變化梯度：{i}', 
+                data=f'gradient_factor={i}')) for i in (5, 10, 50, 100)
+        ],
+        'gradient_factor': 
+        [QuickReplyButton(
+            action=PostbackAction(
+                label=j, 
+                display_text=f'第一道色彩：{j}', 
+                data=f'first_tone={i}')) for i, j in color_dict.items()
+        ],
+        'first_tone':
+        [QuickReplyButton(
+            action=PostbackAction(
+                label=j, 
+                display_text=f'第二道色彩：{j}', 
+                data=f'second_tone={i}')) for i, j in color_dict.items()
+        ]
+    }
+    
+    user_id = event.source.user_id
+    postback_data = event.postback.data
+    current_phase = postback_data.split('=')[0]
+
+    # 依照使用者的選擇更新資料
+    update_record(user_id, current_phase, postback_data.split('=')[1])
+    
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(
+            text=reply_dict[current_phase],
+            quick_reply=QuickReply(
+                items=quick_button_dict[current_phase]))
+        )
+    
+def phase_finish(event):
+    user_id = event.source.user_id
+    postback_data = event.postback.data
+    current_phase = postback_data.split('=')[0]
+
+    # 更新資料並取得最後的完整設定
+    record = update_record(user_id, current_phase, postback_data.split('=')[1])
+
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=str(record))
+    )
 
 
 
 
 
 
+@handler.add(MessageEvent, message=ImageMessage)
+def handle_image(event):
+    phase_start(event)
 
-        output.append(carousel_template_message)
-
-        line_bot_api.reply_message(event.reply_token, output)
-
-    except:
-      line_bot_api.reply_message(event.reply_token,TextSendMessage(text="額..我找不到"))
-
-
-
-
+@handler.add(PostbackEvent)
+def handle_postback(event):
+    if not event.postback.data.startswith('second_tone='):
+        phase_intermediate(event)
+    else:
+        phase_finish(event)
 
 #主程式
 if __name__ == "__main__":
