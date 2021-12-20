@@ -132,7 +132,7 @@ def handle_follow(event):
 def handle_postback(event):
     # line_bot_api.reply_message( event.reply_token,TextSendMessage(text= event.postback.data ) )
     if event.postback.data == 'datetime_postback':
-      line_bot_api.reply_message( event.reply_toksen, TextSendMessage(text=event.postback.params['datetime']))
+      line_bot_api.reply_message( event.reply_token, TextSendMessage(text=event.postback.params['datetime']))
 # 文字事件
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
