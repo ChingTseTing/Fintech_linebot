@@ -151,8 +151,8 @@ def handle_message(event):
                                 label='教學內容',
                                 text='教學內容'
                             ),
-                         
-                            PostbackAction(label='ping with text', data='ping1', text='ping2')
+                            DatetimePickerAction(label='datetime',data='datetime_postback',mode='datetime')
+#                             PostbackAction(label='ping with text', data='ping1', text='ping2')
                         ]
                     ),
                     CarouselColumn(
