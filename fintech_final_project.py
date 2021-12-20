@@ -231,8 +231,8 @@ def handle_message(event):
 
     #     line_bot_api.reply_message(event.reply_token, output)
 
-    except:
-      line_bot_api.reply_message(event.reply_token,TextSendMessage(text="額..我找不到"))
+#     except:
+#       line_bot_api.reply_message(event.reply_token,TextSendMessage(text="額..我找不到"))
 
 
 #  action= DatetimePickerAction(label='datetime',data='datetime_postback',mode='datetime')),
