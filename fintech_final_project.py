@@ -133,7 +133,7 @@ def init_table(TABLE_NAME):
             message_id VARCHAR ( 50 ) NOT NULL,
             stock VARCHAR ( 20 ) NOT NULL,
             period VARCHAR ( 20 ) NOT NULL,
-            interval VARCHAR ( 20 ) NOT NULL,
+            interval VARCHAR ( 20 ) NOT NULL
         );"""
 
         cursor.execute(create_table_query)
