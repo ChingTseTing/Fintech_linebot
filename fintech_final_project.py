@@ -234,7 +234,7 @@ def phase_intermediate(event , TABLE_NAME ):
               )
           )
       )
-    if postback_data.split('=')[0]=="period":
+    if postback_data.split('=')[0]=="interval":
 
         line_bot_api.reply_message(
             event.reply_token,
