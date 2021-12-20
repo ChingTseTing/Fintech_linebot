@@ -80,27 +80,27 @@ richmenu_1 = RichMenu(
     chat_bar_text="功能選單",
     areas=[RichMenuArea(
         bounds=RichMenuBounds(x=0, y=0, width=2500/3, height=843),
-        action=PostbackAction(label='即時查詢', data='即時查詢')
+        action=PostbackAction(label='即時查詢', data='即時查詢',text='即時查詢')
         ),
         RichMenuArea(
         bounds=RichMenuBounds(x=2500/3, y=0, width=2500/3, height=843),
-        action=PostbackAction(label='歷史資料', data='歷史資料')
+        action=PostbackAction(label='歷史資料', data='歷史資料',text='歷史資料')
         ),
         RichMenuArea(
         bounds=RichMenuBounds(x=2500*2/3, y=0, width=2500/3, height=843),
-        action=PostbackAction(label='技術分析', data='技術分析')
+        action=PostbackAction(label='技術分析', data='技術分析',text='技術分析')
         ),
         RichMenuArea(
         bounds=RichMenuBounds(x=0, y=843, width=2500/3, height=843),
-        action=PostbackAction(label='機器學習預測', data='機器學習預測')
+        action=PostbackAction(label='機器學習預測', data='機器學習預測',text='機器學習預測')
         ),
         RichMenuArea(
         bounds=RichMenuBounds(x=2500/3, y=843, width=2500/3, height=843),
-        action=PostbackAction(label='最新消息', data='最新消息')
+        action=PostbackAction(label='最新消息', data='最新消息',text='最新消息')
         ),
         RichMenuArea(
         bounds=RichMenuBounds(x=2500*2/3, y=843, width=2500/3, height=843),
-        action=PostbackAction(label='意見回饋', data='意見回饋')
+        action=PostbackAction(label='意見回饋', data='意見回饋',text='意見回饋')
         )
     ]
 )
@@ -289,13 +289,11 @@ def handle_follow(event):
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     message = TextSendMessage(text=event.message.text)
+    
+    if event.message.text=="技術分析":
+      phase_start(event, 'user_dualtone_settings')
 
-
-
-@handler.add(MessageEvent, message=ImageMessage)
-def handle_image(event):
-    phase_start(event, 'user_dualtone_settings')
-
+# postback event事件
 @handler.add(PostbackEvent)
 def handle_postback(event):
  
@@ -305,28 +303,7 @@ def handle_postback(event):
     if event.postback.data.startswith('second_tone='):
         phase_finish(event, 'user_dualtone_settings')
 
-    if event.postback.data == "技術分析":
-      
-      buttons_template_message = TemplateSendMessage(
-         alt_text='這個看不到',
-         template=ButtonsTemplate(
-             thumbnail_image_url='https://i.imgur.com/wpM584d.jpg',
-             title='行銷搬進大程式',
-             text='選單功能－TemplateSendMessage',
-             actions=[
-              
-                 URIAction(
-                     label='行銷搬進大程式',
-                     uri='https://marketingliveincode.com/'
-                 ),
-                 MessageAction(
-                    label='開始',
-                    text='我就是資料'
-                 )
-             ]
-         )
-      )
-      line_bot_api.reply_message(event.reply_token, buttons_template_message)
+
 
 
 
