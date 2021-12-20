@@ -293,14 +293,14 @@ def handle_message(event):
 
 @handler.add(MessageEvent, message=ImageMessage)
 def handle_image(event):
-    phase_start(event)
+    phase_start(event, 'user_dualtone_settings')
 
 @handler.add(PostbackEvent)
 def handle_postback(event):
     if not event.postback.data.startswith('second_tone='):
-        phase_intermediate(event)
+        phase_intermediate(event, 'user_dualtone_settings')
     else:
-        phase_finish(event)
+        phase_finish(event, 'user_dualtone_settings')
 
 
 
