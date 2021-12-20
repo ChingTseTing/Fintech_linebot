@@ -15,4 +15,3 @@ mpl_finance
 oauth2client
 gspread
 psycopg2
-ta-lib
