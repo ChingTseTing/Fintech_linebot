@@ -146,7 +146,7 @@ def handle_message(event):
              thumbnail_image_url='https://i.imgur.com/wpM584d.jpg',
              title='行銷搬進大程式',
              text='選單功能－TemplateSendMessage',
-             action = DatetimePickerAction(label='datetime',data='datetime_postback',mode='datetime')
+             actions = [ DatetimePickerAction(label='datetime',data='datetime_postback',mode='datetime') ] 
 
          )
      )
