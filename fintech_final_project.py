@@ -290,8 +290,10 @@ def handle_follow(event):
 def handle_message(event):
     message = TextSendMessage(text=event.message.text)
     
-    if event.message.text=="技術分析":
+      
+    if get_stock(stock_id )!=0:
       phase_start(event, 'user_dualtone_settings')
+
 
 # postback event事件
 @handler.add(PostbackEvent)
