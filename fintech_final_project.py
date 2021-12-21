@@ -305,8 +305,8 @@ def handle_postback(event):
 
     if event.postback.data=="及時查詢" :     
       phase_start(event,"及時查詢" ,  'your_table' )
-    if event.postback.data=="歷史股價" :     
-      phase_start(event,"歷史股價" ,  'your_table' )
+    if event.postback.data=="歷史資料" :     
+      phase_start(event,"歷史資料" ,  'your_table' )
     if event.postback.data=="技術分析" :     
       phase_start(event,"技術分析" ,  'your_table' )
     if event.postback.data.startswith('period=') or event.postback.data.startswith('interval=') or event.postback.data.startswith('indicator='):
