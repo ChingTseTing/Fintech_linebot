@@ -156,9 +156,9 @@ def drop_table(TABLE_NAME):
 
 def init_record(user_id,   problem  ,TABLE_NAME ):
     conn, cursor = access_database()
-    table_columns = '(user_id,  problem ,stock, period, interval)'
-    postgres_insert_query = "INSERT INTO "+ TABLE_NAME + f" {table_columns} VALUES (%s,%s,%s,%s,%s)"
-    record = (user_id, problem ,'2330.TW', '3y', '1d')
+    table_columns = '(user_id,  problem ,stock, period, interval, indicator)'
+    postgres_insert_query = "INSERT INTO "+ TABLE_NAME + f" {table_columns} VALUES (%s,%s,%s,%s,%s,%s)"
+    record = (user_id, problem ,'2330.TW', '3y', '1d', 'MACD')
     cursor.execute(postgres_insert_query, record)
     conn.commit()
     cursor.close()
