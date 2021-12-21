@@ -133,7 +133,8 @@ def init_table(TABLE_NAME):
             problem VARCHAR ( 20 ) NOT NULL,
             stock VARCHAR ( 20 ) NOT NULL,
             period VARCHAR ( 20 ) NOT NULL,
-            interval VARCHAR ( 20 ) NOT NULL
+            interval VARCHAR ( 20 ) NOT NULL,
+            indicator VARCHAR ( 20 ) NOT NULL
         );"""
 
         cursor.execute(create_table_query)
@@ -212,7 +213,6 @@ def phase_intermediate(event , TABLE_NAME ):
     record = find_record(event.source.user_id, TABLE_NAME, "problem")    
     
     if event.type=="message":
-    
       update_record(event.source.user_id, "stock", event.message.text , TABLE_NAME )
       mode_dict = {'1d':'1天','5d':'5天','1mo':'1個月','3mo':'3個月','6mo':'6個月','1y':'1年','3y':'3年','5y':'5年','10y':'10年'}
       line_bot_api.reply_message(
@@ -248,8 +248,27 @@ def phase_intermediate(event , TABLE_NAME ):
       )
       
     if event.type=="postback" and event.postback.data.split('=')[0]=="interval":
+      record = update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
+      mode_dict = {'MACD':'MACD','RSI':'RSI'}
+      line_bot_api.reply_message(
+          event.reply_token,
+          TextSendMessage(
+              text=f"[3/3] 請選擇指標", 
+              quick_reply=QuickReply(
+                  items=[QuickReplyButton(action=PostbackAction(
+                      label=v, 
+                      display_text=f'指標：{v}',
+                      data=f'indicator={k}')) for k, v in mode_dict.items()
+                  ]
+              )
+          )
+      )
+
+    if event.type=="postback" and event.postback.data.split('=')[0]=="indicator":
+
+
       update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
-      record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, period, interval")    
+      record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, period, interval, indicator")    
       line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=str(record))
@@ -278,7 +297,7 @@ def handle_message(event):
     
       
     if len(get_stock(event.message.text))!=0:
-      phase_intermediate(event, 'technical_analysis')
+      phase_intermediate(event, 'your_table')
 
 
 # postback event事件
@@ -286,10 +305,10 @@ def handle_message(event):
 def handle_postback(event):
  
     if event.postback.data=="技術分析" :     
-      phase_start(event,"技術分析" ,  'technical_analysis' )
+      phase_start(event,"技術分析" ,  'your_table' )
 
-    if event.postback.data.startswith('period=') or event.postback.data.startswith('interval='):
-      phase_intermediate(event, 'technical_analysis')
+    if event.postback.data.startswith('period=') or event.postback.data.startswith('interval=') or event.postback.data.startswith('indicator='):
+      phase_intermediate(event, 'your_table')
 
 
 
