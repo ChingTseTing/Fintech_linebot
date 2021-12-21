@@ -204,21 +204,21 @@ def phase_start(event,   proplem  , TABLE_NAME):
     else:
         _ = init_record(event.source.user_id,   proplem  , TABLE_NAME )
 
-    line_bot_api.reply_message( event.reply_token, TextSendMessage(text="[1/3] 請輸入股票代碼")   )
+    line_bot_api.reply_message( event.reply_token, TextSendMessage(text="請輸入股票代碼")   )
 
 
 def phase_intermediate(event , TABLE_NAME ):
     
     
-    record = find_record(event.source.user_id, TABLE_NAME, "problem")    
+    problem_type = find_record(event.source.user_id, TABLE_NAME, "problem")    
     
-    if event.type=="message":
+    if (True in [ i in problem_type  for i in ["即時查詢", "歷史資料", "技術分析"] ] ) and event.type=="message":
       update_record(event.source.user_id, "stock", event.message.text , TABLE_NAME )
       mode_dict = {'1d':'1天','5d':'5天','1mo':'1個月','3mo':'3個月','6mo':'6個月','1y':'1年','3y':'3年','5y':'5年','10y':'10年'}
       line_bot_api.reply_message(
         event.reply_token,
           TextSendMessage(
-              text=f"[2/3] 請選擇日期範圍", 
+              text=f"請選擇日期範圍", 
               quick_reply=QuickReply(
                   items=[QuickReplyButton(action=PostbackAction(
                       label=v, 
@@ -236,7 +236,7 @@ def phase_intermediate(event , TABLE_NAME ):
       line_bot_api.reply_message(
           event.reply_token,
           TextSendMessage(
-              text=f"[3/3] 請選擇數據頻率", 
+              text=f"請選擇數據頻率", 
               quick_reply=QuickReply(
                   items=[QuickReplyButton(action=PostbackAction(
                       label=v, 
@@ -253,7 +253,7 @@ def phase_intermediate(event , TABLE_NAME ):
       line_bot_api.reply_message(
           event.reply_token,
           TextSendMessage(
-              text=f"[3/3] 請選擇指標", 
+              text=f"請選擇指標", 
               quick_reply=QuickReply(
                   items=[QuickReplyButton(action=PostbackAction(
                       label=v, 
@@ -295,7 +295,6 @@ def handle_follow(event):
 def handle_message(event):
     message = TextSendMessage(text=event.message.text)
     
-      
     if len(get_stock(event.message.text))!=0:
       phase_intermediate(event, 'your_table')
 
@@ -303,10 +302,13 @@ def handle_message(event):
 # postback event事件
 @handler.add(PostbackEvent)
 def handle_postback(event):
- 
+
+    if event.postback.data=="及時查詢" :     
+      phase_start(event,"及時查詢" ,  'your_table' )
+    if event.postback.data=="歷史股價" :     
+      phase_start(event,"歷史股價" ,  'your_table' )
     if event.postback.data=="技術分析" :     
       phase_start(event,"技術分析" ,  'your_table' )
-
     if event.postback.data.startswith('period=') or event.postback.data.startswith('interval=') or event.postback.data.startswith('indicator='):
       phase_intermediate(event, 'your_table')
 
