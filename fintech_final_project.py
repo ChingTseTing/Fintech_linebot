@@ -130,7 +130,6 @@ def init_table(TABLE_NAME):
 
         create_table_query = """CREATE TABLE """+ TABLE_NAME +""" (
             user_id VARCHAR ( 50 ) PRIMARY KEY,
-            message_id VARCHAR ( 50 ) NOT NULL,
             problem VARCHAR ( 20 ) NOT NULL,
             stock VARCHAR ( 20 ) NOT NULL,
             period VARCHAR ( 20 ) NOT NULL,
@@ -154,11 +153,11 @@ def drop_table(TABLE_NAME):
   return True
 
 
-def init_record(user_id, message_id, TABLE_NAME):
+def init_record(user_id,  TABLE_NAME , problem):
     conn, cursor = access_database()
-    table_columns = '(user_id, message_id, problem ,stock, period, interval)'
-    postgres_insert_query = "INSERT INTO "+ TABLE_NAME + f" {table_columns} VALUES (%s,%s,%s,%s,%s,%s)"
-    record = (user_id, message_id,'技術分析' ,'2330.TW', '3y', '1d')
+    table_columns = '(user_id,  problem ,stock, period, interval)'
+    postgres_insert_query = "INSERT INTO "+ TABLE_NAME + f" {table_columns} VALUES (%s,%s,%s,%s,%s)"
+    record = (user_id, problem ,'2330.TW', '3y', '1d')
     cursor.execute(postgres_insert_query, record)
     conn.commit()
     cursor.close()
@@ -194,17 +193,16 @@ def update_record(user_id, col, value, TABLE_NAME):
 
 ##  AlmaTalks.py
 
-def phase_start(event, TABLE_NAME ):
+def phase_start(event, TABLE_NAME , proplem):
     # 初始化表格
     init_table(TABLE_NAME)
 
     # 檢查使用者資料是否存在
     if check_record(event.source.user_id , TABLE_NAME ):
-        _ = update_record(event.source.user_id, 'message_id', event.message.id , TABLE_NAME)
+        _ = update_record(event.source.user_id, "problem" , proplem , TABLE_NAME)
     else:
-        _ = init_record(event.source.user_id, event.message.id , TABLE_NAME)
-
-    record = update_record(event.source.user_id, "problem" , event.postback.data , TABLE_NAME )
+        _ = init_record(event.source.user_id, proplem , TABLE_NAME)
+        
     line_bot_api.reply_message( event.reply_token, TextSendMessage(text="請輸入股票代碼")   )
 
 
@@ -287,7 +285,7 @@ def handle_message(event):
 def handle_postback(event):
  
     if event.postback.data=="技術分析" :     
-      phase_start(event, 'technical_analysis')
+      phase_start(event, 'technical_analysis',"技術分析" )
 
     if event.postback.data.startswith('period=') or event.postback.data.startswith('interval='):
       phase_intermediate(event, 'technical_analysis')
