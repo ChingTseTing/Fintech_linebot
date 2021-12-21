@@ -247,7 +247,7 @@ def phase_intermediate(event , TABLE_NAME ):
         
       if event.type=="postback" and event.postback.data.split('=')[0]=="interval":
         update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
-        record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, period, interval, indicator")    
+        record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, period, interval")    
         line_bot_api.reply_message(event.reply_token,TextSendMessage(text=str(record)))
 
 
