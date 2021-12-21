@@ -153,7 +153,7 @@ def drop_table(TABLE_NAME):
   return True
 
 
-def init_record(user_id,  TABLE_NAME , problem):
+def init_record(user_id,   problem  ,TABLE_NAME ):
     conn, cursor = access_database()
     table_columns = '(user_id,  problem ,stock, period, interval)'
     postgres_insert_query = "INSERT INTO "+ TABLE_NAME + f" {table_columns} VALUES (%s,%s,%s,%s,%s)"
@@ -193,7 +193,7 @@ def update_record(user_id, col, value, TABLE_NAME):
 
 ##  AlmaTalks.py
 
-def phase_start(event, TABLE_NAME , proplem):
+def phase_start(event,   proplem  , TABLE_NAME):
     # 初始化表格
     init_table(TABLE_NAME)
 
@@ -201,8 +201,8 @@ def phase_start(event, TABLE_NAME , proplem):
     if check_record(event.source.user_id , TABLE_NAME ):
         _ = update_record(event.source.user_id, "problem" , proplem , TABLE_NAME)
     else:
-        _ = init_record(event.source.user_id, proplem , TABLE_NAME)
-        
+        _ = init_record(event.source.user_id,   proplem  , TABLE_NAME )
+
     line_bot_api.reply_message( event.reply_token, TextSendMessage(text="請輸入股票代碼")   )
 
 
@@ -285,7 +285,7 @@ def handle_message(event):
 def handle_postback(event):
  
     if event.postback.data=="技術分析" :     
-      phase_start(event, 'technical_analysis',"技術分析" )
+      phase_start(event,"技術分析" ,  'technical_analysis' )
 
     if event.postback.data.startswith('period=') or event.postback.data.startswith('interval='):
       phase_intermediate(event, 'technical_analysis')
