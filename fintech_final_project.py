@@ -198,7 +198,7 @@ def phase_start(event, TABLE_NAME):
         _ = init_record(event.source.user_id, event.message.id , TABLE_NAME)
 
 
-    rcord = update_record(event.source.user_id, "stock", event.message.text , TABLE_NAME )
+    record = update_record(event.source.user_id, "stock", event.message.text , TABLE_NAME )
 
     mode_dict = {'1d':'1天','5d':'5天','1mo':'1個月','3mo':'3個月','6mo':'6個月','1y':'1年','3y':'3年','5y':'5年','10y':'10年'}
     line_bot_api.reply_message(
