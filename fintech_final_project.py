@@ -208,81 +208,55 @@ def phase_start(event,   proplem  , TABLE_NAME):
 
 
 def phase_intermediate(event , TABLE_NAME ):
-    
-    
-    problem_type = find_record(event.source.user_id, TABLE_NAME, "problem")    
-    
-    if (True in [ i in problem_type  for i in ["即時查詢", "歷史資料", "技術分析"] ] ) and event.type=="message":
-      update_record(event.source.user_id, "stock", event.message.text , TABLE_NAME )
-      mode_dict = {'1d':'1天','5d':'5天','1mo':'1個月','3mo':'3個月','6mo':'6個月','1y':'1年','3y':'3年','5y':'5年','10y':'10年'}
-      line_bot_api.reply_message(
-        event.reply_token,
-          TextSendMessage(
-              text=f"請選擇日期範圍", 
-              quick_reply=QuickReply(
-                  items=[QuickReplyButton(action=PostbackAction(
-                      label=v, 
-                      display_text=f'日期範圍：{v}',
-                      data=f'period={k}')) for k, v in mode_dict.items()
-                  ]
-              )
-          )
-      )
+  
+    problem_type = find_record(event.source.user_id, TABLE_NAME, "problem")  
 
-
-    if event.type=="postback" and event.postback.data.split('=')[0]=="period":
-      record = update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
-      mode_dict = {'1m':'1分','15m':'15分','60m':'60分','90m':'90分','1h':'1小時','1d':'1天','5d':'5天','1wk':'1週','1mo':'1個月','3mo':'3個月'}
-      line_bot_api.reply_message(
+    if "技術分析" in problem_type :
+      if event.type=="message":
+        update_record(event.source.user_id, "stock", event.message.text , TABLE_NAME )
+        mode_dict = {'1d':'1天','5d':'5天','1mo':'1個月','3mo':'3個月','6mo':'6個月','1y':'1年','3y':'3年','5y':'5年','10y':'10年'}
+        line_bot_api.reply_message(
           event.reply_token,
-          TextSendMessage(
-              text=f"請選擇數據頻率", 
-              quick_reply=QuickReply(
-                  items=[QuickReplyButton(action=PostbackAction(
-                      label=v, 
-                      display_text=f'數據頻率：{v}',
-                      data=f'interval={k}')) for k, v in mode_dict.items()
-                  ]
-              )
-          )
-      )
-      
-    if event.type=="postback" and event.postback.data.split('=')[0]=="interval":
-      record = update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
-      mode_dict = {'MACD':'MACD','RSI':'RSI'}
-      line_bot_api.reply_message(
-          event.reply_token,
-          TextSendMessage(
-              text=f"請選擇指標", 
-              quick_reply=QuickReply(
-                  items=[QuickReplyButton(action=PostbackAction(
-                      label=v, 
-                      display_text=f'指標：{v}',
-                      data=f'indicator={k}')) for k, v in mode_dict.items()
-                  ]
-              )
-          )
-      )
+            TextSendMessage(
+                text=f"請選擇日期範圍", 
+                quick_reply=QuickReply(
+                    items=[QuickReplyButton(action=PostbackAction(label=v, display_text=f'日期範圍：{v}',data=f'period={k}')) for k, v in mode_dict.items() ]
+                )
+            )
+        )
 
-    if event.type=="postback" and event.postback.data.split('=')[0]=="indicator":
-
-
-      update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
-      record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, period, interval, indicator")    
-      line_bot_api.reply_message(
+      if event.type=="postback" and event.postback.data.split('=')[0]=="period":
+        record = update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
+        mode_dict = {'1m':'1分','15m':'15分','60m':'60分','90m':'90分','1h':'1小時','1d':'1天','5d':'5天','1wk':'1週','1mo':'1個月','3mo':'3個月'}
+        line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text=str(record))
-      )
+            TextSendMessage(
+                text=f"請選擇數據頻率", 
+                quick_reply=QuickReply(
+                    items=[QuickReplyButton(action=PostbackAction(label=v, display_text=f'數據頻率：{v}',data=f'interval={k}')) for k, v in mode_dict.items() ]
+                )
+            )
+        )
         
-# def phase_finish(event , TABLE_NAME ):
-#     user_id = event.source.user_id
-#     postback_data = event.postback.data
-#     current_phase = postback_data.split('=')[0]
+      if event.type=="postback" and event.postback.data.split('=')[0]=="interval":
+        record = update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
+        mode_dict = {'MACD':'MACD','RSI':'RSI'}
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(
+                text=f"請選擇指標", 
+                quick_reply=QuickReply(
+                    items=[QuickReplyButton(action=PostbackAction(label=v, display_text=f'指標：{v}',data=f'indicator={k}')) for k, v in mode_dict.items() ]
+                )
+            )
+        )
 
-#     # 更新資料並取得最後的完整設定
-#     record = update_record(user_id, current_phase, postback_data.split('=')[1] , TABLE_NAME )
+      if event.type=="postback" and event.postback.data.split('=')[0]=="indicator":
 
-
+        update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
+        record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, period, interval, indicator")    
+        line_bot_api.reply_message(event.reply_token,TextSendMessage(text=str(record)))
+          
 
 
 # 加入好友事件
