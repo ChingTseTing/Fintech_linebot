@@ -177,7 +177,7 @@ def update_record(user_id, col, value, TABLE_NAME):
     postgres_update_query = "UPDATE " + TABLE_NAME +f" SET {col} = %s WHERE user_id = %s"
     cursor.execute(postgres_update_query, (value, user_id))
     conn.commit()
-    postgres_select_query = "SELECT * FROM "+ TABLE_NAME + f" WHERE user_id = '{user_id}';"
+    postgres_select_query = "SELECT stock FROM "+ TABLE_NAME + f" WHERE user_id = '{user_id}';"
     cursor.execute(postgres_select_query)
     user_settings = cursor.fetchone()
     cursor.close()
