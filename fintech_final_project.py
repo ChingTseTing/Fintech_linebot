@@ -212,7 +212,7 @@ def phase_intermediate(event , TABLE_NAME ):
     
     problem_type = find_record(event.source.user_id, TABLE_NAME, "problem")    
     
-    if event.type=="message":
+    if (True in [ i in problem_type  for i in ["即時查詢", "歷史資料", "技術分析"] ] ) and event.type=="message":
       update_record(event.source.user_id, "stock", event.message.text , TABLE_NAME )
       mode_dict = {'1d':'1天','5d':'5天','1mo':'1個月','3mo':'3個月','6mo':'6個月','1y':'1年','3y':'3年','5y':'5年','10y':'10年'}
       line_bot_api.reply_message(
@@ -303,8 +303,8 @@ def handle_message(event):
 @handler.add(PostbackEvent)
 def handle_postback(event):
 
-    if event.postback.data=="及時查詢" :     
-      phase_start(event,"及時查詢" ,  'your_table' )
+    if event.postback.data=="即時查詢" :     
+      phase_start(event,"即時查詢" ,  'your_table' )
     if event.postback.data=="歷史資料" :     
       phase_start(event,"歷史資料" ,  'your_table' )
     if event.postback.data=="技術分析" :     
