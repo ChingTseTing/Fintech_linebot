@@ -213,7 +213,7 @@ def phase_intermediate(event , TABLE_NAME ):
     
     record = find_record(event.source.user_id, TABLE_NAME, "problem")    
     
-    if event.message.type=="text":
+    if event.type=="message":
     
       update_record(event.source.user_id, "stock", event.message.text , TABLE_NAME )
       mode_dict = {'1d':'1天','5d':'5天','1mo':'1個月','3mo':'3個月','6mo':'6個月','1y':'1年','3y':'3年','5y':'5年','10y':'10年'}
@@ -286,7 +286,7 @@ def handle_message(event):
 @handler.add(PostbackEvent)
 def handle_postback(event):
  
-    if event.postback.data=="技術分析";
+    if event.postback.data=="技術分析" :     
       phase_start(event, 'technical_analysis')
 
     if event.postback.data.startswith('period=') or event.postback.data.startswith('interval='):
