@@ -203,7 +203,7 @@ def phase_start(event,   proplem  , TABLE_NAME):
     else:
         _ = init_record(event.source.user_id,   proplem  , TABLE_NAME )
 
-    line_bot_api.reply_message( event.reply_token, TextSendMessage(text="請輸入股票代碼")   )
+    line_bot_api.reply_message( event.reply_token, TextSendMessage(text="[1/3] 請輸入股票代碼")   )
 
 
 def phase_intermediate(event , TABLE_NAME ):
@@ -218,7 +218,7 @@ def phase_intermediate(event , TABLE_NAME ):
       line_bot_api.reply_message(
         event.reply_token,
           TextSendMessage(
-              text=f"請選擇日期範圍", 
+              text=f"[2/3] 請選擇日期範圍", 
               quick_reply=QuickReply(
                   items=[QuickReplyButton(action=PostbackAction(
                       label=v, 
@@ -236,7 +236,7 @@ def phase_intermediate(event , TABLE_NAME ):
       line_bot_api.reply_message(
           event.reply_token,
           TextSendMessage(
-              text=f"請選擇數據頻率", 
+              text=f"[3/3] 請選擇數據頻率", 
               quick_reply=QuickReply(
                   items=[QuickReplyButton(action=PostbackAction(
                       label=v, 
@@ -248,7 +248,8 @@ def phase_intermediate(event , TABLE_NAME ):
       )
       
     if event.type=="postback" and event.postback.data.split('=')[0]=="interval":
-      record = update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
+      update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
+      record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, period, interval")    
       line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=str(record))
