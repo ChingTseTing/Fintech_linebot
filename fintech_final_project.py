@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 #載入LineBot所需要的套件
 from flask import Flask, request, abort
