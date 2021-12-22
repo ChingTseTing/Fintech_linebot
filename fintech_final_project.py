@@ -127,7 +127,7 @@ richmenu_1 = RichMenu(
         ),
         RichMenuArea(
         bounds=RichMenuBounds(x=2500*2/3, y=843, width=2500/3, height=843),
-        action=PostbackAction(label='意見回饋', data='意見回饋',text='意見回饋')
+        action=URIAction(label='意見回饋',uri='https://docs.google.com/forms/d/e/1FAIpQLSeU32QbrDZPIV_BGRypNZwCOdz6Jz8_-zBystvgEzXLMpdiwQ/viewform?usp=sf_link')
         )
     ]
 )
@@ -325,14 +325,15 @@ def phase_intermediate(event , TABLE_NAME ):
         record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, period, interval, indicator")            
 
         # line_bot_api.reply_message(event.reply_token,TextSendMessage(text=str(record)))
-        line_bot_api.reply_message( event.reply_token, ImageSendMessage(original_content_url=analysis_plot(record), preview_image_url=analysis_plot(record))  )
+        image_uri = analysis_plot(record)
+        line_bot_api.reply_message( event.reply_token, ImageSendMessage(original_content_url=image_uri, preview_image_url=image_uri)  )
  
 
 
-# 加入好友事件
-@handler.add(FollowEvent)
-def handle_follow(event):
-    line_bot_api.reply_message( event.reply_token,TextSendMessage(text="你好")  )
+# # 加入好友事件
+# @handler.add(FollowEvent)
+# def handle_follow(event):
+#     line_bot_api.reply_message( event.reply_token,TextSendMessage(text="你好")  )
 
 # 文字事件
 @handler.add(MessageEvent, message=TextMessage)
@@ -355,9 +356,7 @@ def handle_postback(event):
       phase_start(event,"技術分析" ,  'your_table' )
     if event.postback.data.startswith('period=') or event.postback.data.startswith('interval=') or event.postback.data.startswith('indicator='):
       phase_intermediate(event, 'your_table')
-
-
-
+   
 #主程式
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
