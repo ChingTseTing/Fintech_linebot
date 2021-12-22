@@ -29,6 +29,7 @@ import plotly.express as px
 import talib as ta
 
 
+
 app = Flask(__name__)
 
 # 必須放上自己的Channel Access Token
