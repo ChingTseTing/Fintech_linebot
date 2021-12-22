@@ -21,7 +21,12 @@ import matplotlib.pyplot as plt
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials as SAC
 import psycopg2
-
+import mplfinance as mpf
+import pandas as pd
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import plotly.express as px
+import talib as ta
 
 
 app = Flask(__name__)
@@ -49,28 +54,50 @@ def callback():
 
     return 'OK'
 
-# 功能模組-畫圖
-def stock_plot( dataframe , msg ):
-    sns.set_theme()
 
-    fig = plt.figure(figsize=(9, 5))
-    ax = fig.add_subplot(1, 1, 1)
-    ax.set_xlabel('Date')
-    ax.set_ylabel('price')
-    ax.set_title(msg)
-
-    dataframe.plot()
-    plt.savefig('send.png')
-    CLIENT_ID = "08680019f3643c6"  #"TingChingTse"
-    PATH = "send.png"
-    im = pyimgur.Imgur(CLIENT_ID)
-    uploaded_image = im.upload_image(PATH, title="Uploaded with PyImgur")
-    return uploaded_image.link
 
 # 功能模組-求股價
-def get_stock(stock_id ):
-  tmp = yf.download(stock_id , period='3y',interval='1d' )# start='2016-01-01',end=datetime.now().strftime('%Y-%m-%d')
+def get_stock(stock_id ,PERIOD , INTERVAL ):
+  tmp = yf.download(stock_id , period=PERIOD ,interval=INTERVAL )# start='2016-01-01',end=datetime.now().strftime('%Y-%m-%d')
   return tmp
+
+# 功能模組-畫圖
+def analysis_plot():
+  tt =  get_stock('2330.TW' ,'1y' , '1d' )
+
+  # Create subplots and mention plot grid size
+  fig = make_subplots(rows=3, cols=1, shared_xaxes=True, vertical_spacing=0.03, subplot_titles=('OHLC', ''), row_width=[0.2, 0.2,0.7])
+  # Plot OHLC on 1st row
+  fig.add_trace(go.Candlestick(x=tt.index, open=tt["Open"], high=tt["High"],low=tt["Low"], close=tt["Close"], name="OHLC", showlegend=True ), row=1, col=1 )
+  fig.add_trace(go.Scatter(x=tt.index, y=ta.SMA( np.array(tt['Close']) ,timeperiod=5), mode='lines' ,name='MA5', showlegend=True)  , row=1, col=1 )
+  fig.add_trace(go.Scatter(x=tt.index, y=ta.SMA( np.array(tt['Close']) ,timeperiod=10), mode='lines' ,name='MA10', showlegend=True)  , row=1, col=1 )
+
+  # Bar trace for volumes on 2nd row without legend
+  fig.add_trace(go.Bar(x=tt.index, y=tt['Volume'], showlegend=False), row=2, col=1)
+
+  fig.add_trace(go.Scatter(x=tt.index, y=ta.RSI( np.array(tt['Close']) ,timeperiod=14), mode='lines' ,name='RSI', showlegend=True)  , row=3, col=1 )
+
+
+  fig['layout']['yaxis']['title']='Price'
+  fig['layout']['yaxis2']['title']='Volume'
+  fig['layout']['yaxis3']['title']='RSI'
+  # fig.update_layout(
+
+  #     paper_bgcolor="LightSteelBlue",
+  # )
+
+  # Do not show OHLC's rangeslider plot 
+  fig.update(layout_xaxis_rangeslider_visible=False)
+  fig.write_image("figure.png")
+
+  CLIENT_ID = "08680019f3643c6"  #"TingChingTse"
+  PATH = "send.png"
+  im = pyimgur.Imgur(CLIENT_ID)
+  uploaded_image = im.upload_image(PATH, title="Uploaded with PyImgur")
+
+  return uploaded_image.link
+
+
 
 # rich menu 功能選單設置 
 richmenu_1 = RichMenu(
@@ -203,9 +230,9 @@ def phase_start(event,   problem  , TABLE_NAME):
         _ = update_record(event.source.user_id, "problem" , problem , TABLE_NAME)
     else:
         _ = init_record(event.source.user_id,   problem  , TABLE_NAME )
-          
-    line_bot_api.reply_message( event.reply_token, TextSendMessage(text="請輸入股票代碼")   )
-
+    
+    line_bot_api.reply_message( event.reply_token, ImageSendMessage(original_content_url=analysis_plot(), preview_image_url=analysis_plot())  )
+    # line_bot_api.reply_message( event.reply_token, TextSendMessage(text="請輸入股票代碼")   )
 
 
 def phase_intermediate(event , TABLE_NAME ):
@@ -311,7 +338,7 @@ def handle_follow(event):
 def handle_message(event):
     message = TextSendMessage(text=event.message.text)
     
-    if len(get_stock(event.message.text))!=0:
+    if len(get_stock(event.message.text ,'3y' ,'1d' ))!=0:
       phase_intermediate(event, 'your_table')
 
 
