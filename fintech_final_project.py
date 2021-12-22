@@ -323,7 +323,6 @@ def phase_intermediate(event , TABLE_NAME ):
 
         update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
         record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, period, interval, indicator")            
-        record = record.strip("()").replace(" ","").replace("'","").split(",")
 
         # line_bot_api.reply_message(event.reply_token,TextSendMessage(text=str(record)))
         line_bot_api.reply_message( event.reply_token, ImageSendMessage(original_content_url=analysis_plot(record), preview_image_url=analysis_plot(record))  )
