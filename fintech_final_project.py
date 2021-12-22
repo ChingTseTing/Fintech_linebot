@@ -62,11 +62,11 @@ def get_stock(stock_id ,PERIOD , INTERVAL ):
   return tmp
 
 # 功能模組-畫圖
-def analysis_plot():
-  tt =  get_stock('2330.TW' ,'1y' , '1d' )
+def analysis_plot(record):
+  tt =  get_stock( record[1] ,record[2] , record[3] )
 
   # Create subplots and mention plot grid size
-  fig = make_subplots(rows=3, cols=1, shared_xaxes=True, vertical_spacing=0.03, subplot_titles=('OHLC', ''), row_width=[0.2, 0.2,0.7])
+  fig = make_subplots(rows=3, cols=1, shared_xaxes=True, vertical_spacing=0.03, subplot_titles=( record[1] , ''), row_width=[0.2, 0.2,0.7])
   # Plot OHLC on 1st row
   fig.add_trace(go.Candlestick(x=tt.index, open=tt["Open"], high=tt["High"],low=tt["Low"], close=tt["Close"], name="OHLC", showlegend=True ), row=1, col=1 )
   fig.add_trace(go.Scatter(x=tt.index, y=ta.SMA( np.array(tt['Close']) ,timeperiod=5), mode='lines' ,name='MA5', showlegend=True)  , row=1, col=1 )
@@ -231,8 +231,7 @@ def phase_start(event,   problem  , TABLE_NAME):
     else:
         _ = init_record(event.source.user_id,   problem  , TABLE_NAME )
     
-    line_bot_api.reply_message( event.reply_token, ImageSendMessage(original_content_url=analysis_plot(), preview_image_url=analysis_plot())  )
-    # line_bot_api.reply_message( event.reply_token, TextSendMessage(text="請輸入股票代碼")   )
+    line_bot_api.reply_message( event.reply_token, TextSendMessage(text="請輸入股票代碼")   )
 
 
 def phase_intermediate(event , TABLE_NAME ):
@@ -323,9 +322,12 @@ def phase_intermediate(event , TABLE_NAME ):
       if event.type=="postback" and event.postback.data.split('=')[0]=="indicator":
 
         update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
-        record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, period, interval, indicator")    
-        line_bot_api.reply_message(event.reply_token,TextSendMessage(text=str(record)))
-          
+        record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, period, interval, indicator")            
+        record = record.strip("()").replace(" ","").replace("'","").split(",")
+
+        # line_bot_api.reply_message(event.reply_token,TextSendMessage(text=str(record)))
+        line_bot_api.reply_message( event.reply_token, ImageSendMessage(original_content_url=analysis_plot(record), preview_image_url=analysis_plot(record))  )
+ 
 
 
 # 加入好友事件
