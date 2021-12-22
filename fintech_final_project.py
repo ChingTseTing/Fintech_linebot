@@ -11,7 +11,7 @@ from linebot.exceptions import (
 )
 from linebot.models import *
 
-
+import numpy as np 
 import sys, os
 import pyimgur
 import seaborn as sns
