@@ -88,7 +88,7 @@ def analysis_plot():
 
   # Do not show OHLC's rangeslider plot 
   fig.update(layout_xaxis_rangeslider_visible=False)
-  fig.write_image("figure.png")
+  fig.write_image("send.png")
 
   CLIENT_ID = "08680019f3643c6"  #"TingChingTse"
   PATH = "send.png"
