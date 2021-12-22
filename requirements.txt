@@ -15,3 +15,7 @@ mpl_finance
 oauth2client
 gspread
 psycopg2
+ta-lib
+mplfinance
+plotly==5.3.1
+kaleido
