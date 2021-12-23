@@ -17,8 +17,6 @@ import seaborn as sns
 import yfinance as yf
 import pandas as pd
 import matplotlib.pyplot as plt
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials as SAC
 import psycopg2
 import mplfinance as mpf
 import pandas as pd
@@ -26,6 +24,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.express as px
 import talib as ta
+from talib import abstract
 
 
 
