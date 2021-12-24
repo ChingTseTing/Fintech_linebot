@@ -53,47 +53,73 @@ def callback():
 
     return 'OK'
 
-
-
 # 功能模組-求股價
 def get_stock(stock_id ,PERIOD , INTERVAL ):
   tmp = yf.download(stock_id , period=PERIOD ,interval=INTERVAL )# start='2016-01-01',end=datetime.now().strftime('%Y-%m-%d')
   return tmp
 
-# 功能模組-畫圖
+# 功能模組-求index
+def get_stock_index(record):
+  df =  get_stock( record[1] ,record[2] , record[3] )
+  # Bias of moving average
+  df['bias_MA_5'] =  ( df['Close']- ta.SMA(df['Close'], timeperiod=5)  ) / ta.SMA(df['Close'], timeperiod=5)
+  df['bias_MA_10'] = ( df['Close']- ta.SMA(df['Close'], timeperiod=10)  ) / ta.SMA(df['Close'], timeperiod=10)
+  df['bias_MA_20'] = ( df['Close']- ta.SMA(df['Close'], timeperiod=20)  ) / ta.SMA(df['Close'], timeperiod=20)
+  df['bias_MA_60'] = ( df['Close']- ta.SMA(df['Close'], timeperiod=60)  ) / ta.SMA(df['Close'], timeperiod=60)
+  # RSI_14
+  df['RSI_14']    = ta.RSI(df['Close'], timeperiod=14)
+  # DIF DEM HIST (MACD)
+  df['MACD_DIF'], df['MACD_SIGNAL'], df['MACD_BAR'] = ta.MACD( df['Close']  , fastperiod=12, slowperiod=26, signalperiod=9)
+  # KD value 
+  df['k'], df['d'] =ta.STOCH(df['High'], df['Low'], df['Close'])
+  # remove nan
+  df.dropna(axis=0,how='any', inplace=True)
+  return df # Open	High	Low	Close Adj Close	Volume	MA_5	MA_10	MA_20	MA_60	RSI_14	DIF	MACD	MACD_BAR
+
+
+
+
+
 def analysis_plot(record):
   tt =  get_stock( record[1] ,record[2] , record[3] )
-
   # Create subplots and mention plot grid size
-  fig = make_subplots(rows=3, cols=1, shared_xaxes=True, vertical_spacing=0.03, subplot_titles=( record[1] , ''), row_width=[0.2, 0.2,0.7])
+  fig = make_subplots(rows=3, cols=1, shared_xaxes=True, vertical_spacing=0.03, subplot_titles=( record[1] , ''), row_width=[0.3, 0.3,1])
   # Plot OHLC on 1st row
   fig.add_trace(go.Candlestick(x=tt.index, open=tt["Open"], high=tt["High"],low=tt["Low"], close=tt["Close"], name="OHLC", showlegend=True ), row=1, col=1 )
   fig.add_trace(go.Scatter(x=tt.index, y=ta.SMA( np.array(tt['Close']) ,timeperiod=5), mode='lines' ,name='MA5', showlegend=True)  , row=1, col=1 )
   fig.add_trace(go.Scatter(x=tt.index, y=ta.SMA( np.array(tt['Close']) ,timeperiod=10), mode='lines' ,name='MA10', showlegend=True)  , row=1, col=1 )
-
+  fig.add_trace(go.Scatter(x=tt.index, y=ta.SMA( np.array(tt['Close']) ,timeperiod=20), mode='lines' ,name='MA20', showlegend=True)  , row=1, col=1 )
+  fig.add_trace(go.Scatter(x=tt.index, y=ta.SMA( np.array(tt['Close']) ,timeperiod=60), mode='lines' ,name='MA60', showlegend=True)  , row=1, col=1 )
   # Bar trace for volumes on 2nd row without legend
   fig.add_trace(go.Bar(x=tt.index, y=tt['Volume'], showlegend=False), row=2, col=1)
-
-  fig.add_trace(go.Scatter(x=tt.index, y=ta.RSI( np.array(tt['Close']) ,timeperiod=14), mode='lines' ,name='RSI', showlegend=True)  , row=3, col=1 )
-
+  # plot index
+  if record[4]=="RSI":
+    fig.add_trace(go.Scatter(x=tt.index, y=ta.RSI(tt['Close']), mode='lines' ,name=record[4], showlegend=True)  , row=3, col=1 ) #ta.RSI( np.array(tt['Close']) ,timeperiod=14)
+    fig['layout']['yaxis3']['title']='RSI' 
+  if record[4]=="KD":
+    K,D = ta.STOCH(tt['High'], tt['Low'], tt['Close'])
+    fig.add_trace(go.Scatter(x=tt.index, y=K, mode='lines' ,name='K', showlegend=True)  , row=3, col=1 ) #ta.RSI( np.array(tt['Close']) ,timeperiod=14)
+    fig.add_trace(go.Scatter(x=tt.index, y=D, mode='lines' ,name='D', showlegend=True)  , row=3, col=1 ) #ta.RSI( np.array(tt['Close']) ,timeperiod=14)
+    fig['layout']['yaxis3']['title']='KD'
+  if record[4]=="MACD":
+    MACD_DIF , MACD_SIGNAL, MACD_BAR = ta.MACD(tt['Close'])
+    fig.add_trace(go.Scatter(x=tt.index, y=MACD_DIF, mode='lines' ,name='MACD_DIF', showlegend=True)  , row=3, col=1 ) #ta.RSI( np.array(tt['Close']) ,timeperiod=14)
+    fig.add_trace(go.Scatter(x=tt.index, y=MACD_SIGNAL, mode='lines' ,name='MACD_SIGNAL', showlegend=True)  , row=3, col=1 ) #ta.RSI( np.array(tt['Close']) ,timeperiod=14)
+    fig.add_trace(go.Bar(x=tt.index, y=MACD_BAR,name='MACD_BAR', showlegend=True)  , row=3, col=1 ) #ta.RSI( np.array(tt['Close']) ,timeperiod=14)
+    fig['layout']['yaxis3']['title']='MACD'
 
   fig['layout']['yaxis']['title']='Price'
   fig['layout']['yaxis2']['title']='Volume'
-  fig['layout']['yaxis3']['title']='RSI'
-  # fig.update_layout(
 
-  #     paper_bgcolor="LightSteelBlue",
-  # )
-
+  fig.update_layout(margin=dict(l=30, r=30, t=30, b=30) , template='plotly_dark',paper_bgcolor ='rgb(10,10,10)')
   # Do not show OHLC's rangeslider plot 
   fig.update(layout_xaxis_rangeslider_visible=False)
+  # save image
   fig.write_image("send.png")
-
   CLIENT_ID = "08680019f3643c6"  #"TingChingTse"
   PATH = "send.png"
   im = pyimgur.Imgur(CLIENT_ID)
   uploaded_image = im.upload_image(PATH, title="Uploaded with PyImgur")
-
   return uploaded_image.link
 
 
@@ -218,8 +244,6 @@ def update_record(user_id, col, value, TABLE_NAME):
     return user_settings
 
 
-##  AlmaTalks.py
-
 def phase_start(event,   problem  , TABLE_NAME):
     # 初始化表格
     init_table(TABLE_NAME)
@@ -307,7 +331,7 @@ def phase_intermediate(event , TABLE_NAME ):
         
       if event.type=="postback" and event.postback.data.split('=')[0]=="interval":
         record = update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
-        mode_dict = {'MACD':'MACD','RSI':'RSI'}
+        mode_dict = {'MACD':'MACD','KD':'KD','RSI':'RSI'}
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(
