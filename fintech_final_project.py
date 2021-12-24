@@ -77,9 +77,6 @@ def get_stock_index(record):
   return df # Open	High	Low	Close Adj Close	Volume	MA_5	MA_10	MA_20	MA_60	RSI_14	DIF	MACD	MACD_BAR
 
 
-
-
-
 def analysis_plot(record):
   tt =  get_stock( record[1] ,record[2] , record[3] )
   # Create subplots and mention plot grid size
@@ -122,6 +119,75 @@ def analysis_plot(record):
   uploaded_image = im.upload_image(PATH, title="Uploaded with PyImgur")
   return uploaded_image.link
 
+
+
+def progress_bar(record): 
+  bar  ={
+        "type": "bubble",
+        "body": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": record[0],
+                      "color": "#ffffff",
+                      "weight": "bold",
+                      "size": "xl"
+                    },
+                    {
+                      "type": "text",
+                      "text": record[1]+ " | " +record[2],
+                      "color": "#ffffff",
+                      "size": "xs"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "text": "進度: 43%",
+                  "color": "#ffffff",
+                  "size": "xs"
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "filler"
+                }
+              ],
+              "backgroundColor": "#ffffff5A",
+              "width": "43%",
+              "height": "6px"
+            },
+            {
+              "type": "button",
+              "action": {
+                "type": "postback",
+                "label": "結果",
+                "data": "result"
+              },
+              "color": "#ffffff5A",
+              "margin": "md",
+              "style": "secondary",
+              "height": "sm"
+            }
+          ],
+          "backgroundColor": "#464F69"
+        }
+      }
+  return bar 
 
 
 # rich menu 功能選單設置 
@@ -364,10 +430,11 @@ def phase_intermediate(event , TABLE_NAME ):
       if event.type=="postback" and event.postback.data.split('=')[0]=="model":
         update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
         record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, model")    
-        line_bot_api.reply_message(event.reply_token,TextSendMessage(text=str(record)))
+        # line_bot_api.reply_message(event.reply_token,TextSendMessage(text=str(record)))
 
       
-
+        flex_message = FlexSendMessage( alt_text='', contents= progress_bar(record) )
+        line_bot_api.reply_message(event.reply_token, flex_message)
 
 # 文字事件
 @handler.add(MessageEvent, message=TextMessage)
