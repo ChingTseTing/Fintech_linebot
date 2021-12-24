@@ -363,7 +363,7 @@ def phase_intermediate(event , TABLE_NAME ):
       
       if event.type=="postback" and event.postback.data.split('=')[0]=="model":
         update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
-        record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, period, model")    
+        record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, model")    
         line_bot_api.reply_message(event.reply_token,TextSendMessage(text=str(record)))
 
       
@@ -392,7 +392,7 @@ def handle_postback(event):
       phase_start(event,"即時查詢" ,  'your_table' )
     if event.postback.data=="機器學習預測" :     
       phase_start(event,"機器學習預測" ,  'your_table' ) 
-    if event.postback.data.startswith('period=') or event.postback.data.startswith('interval=') or event.postback.data.startswith('indicator=') event.postback.data.startswith('model='):
+    if event.postback.data.startswith('period=') or event.postback.data.startswith('interval=') or event.postback.data.startswith('indicator=') or event.postback.data.startswith('model='):
       phase_intermediate(event, 'your_table')
    
 #主程式
