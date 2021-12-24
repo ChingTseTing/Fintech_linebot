@@ -186,14 +186,12 @@ def init_table(TABLE_NAME):
             stock VARCHAR ( 20 ) NOT NULL,
             period VARCHAR ( 20 ) NOT NULL,
             interval VARCHAR ( 20 ) NOT NULL,
-            indicator VARCHAR ( 20 ) NOT NULL
+            indicator VARCHAR ( 20 ) NOT NULL,
+            model VARCHAR ( 20 ) NOT NULL,
+            result VARCHAR ( 20 ) NOT NULL
         );"""
-
         cursor.execute(create_table_query)
         conn.commit()
-
-
-
     return True
 
 def drop_table(TABLE_NAME):
@@ -208,9 +206,9 @@ def drop_table(TABLE_NAME):
 
 def init_record(user_id,   problem  ,TABLE_NAME ):
     conn, cursor = access_database()
-    table_columns = '(user_id,  problem ,stock, period, interval, indicator)'
-    postgres_insert_query = "INSERT INTO "+ TABLE_NAME + f" {table_columns} VALUES (%s,%s,%s,%s,%s,%s)"
-    record = (user_id, problem ,'2330.TW', '3y', '1d', 'MACD')
+    table_columns = '(user_id,  problem ,stock, period, interval, indicator ,model, result)'
+    postgres_insert_query = "INSERT INTO "+ TABLE_NAME + f" {table_columns} VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+    record = (user_id, problem ,'2330.TW', '3y', '1d', 'MACD','LSTM' ,'0')
     cursor.execute(postgres_insert_query, record)
     conn.commit()
     cursor.close()
@@ -252,9 +250,10 @@ def phase_start(event,   problem  , TABLE_NAME):
     if check_record(event.source.user_id , TABLE_NAME ):
         _ = update_record(event.source.user_id, "problem" , problem , TABLE_NAME)
     else:
-        _ = init_record(event.source.user_id,   problem  , TABLE_NAME )
-    
+        _ = init_record(event.source.user_id,   problem  , TABLE_NAME )  
     line_bot_api.reply_message( event.reply_token, TextSendMessage(text="請輸入股票代碼")   )
+
+
 
 
 def phase_intermediate(event , TABLE_NAME ):
@@ -266,7 +265,7 @@ def phase_intermediate(event , TABLE_NAME ):
         record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock")    
         line_bot_api.reply_message(event.reply_token,TextSendMessage(text=str(record)))
 
-    
+
     if "歷史資料" in problem_type :
       if event.type=="message":
         update_record(event.source.user_id, "stock", event.message.text , TABLE_NAME )
@@ -280,7 +279,6 @@ def phase_intermediate(event , TABLE_NAME ):
                 )
             )
         )
-
       if event.type=="postback" and event.postback.data.split('=')[0]=="period":
         record = update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
         mode_dict = {'1m':'1分','15m':'15分','60m':'60分','90m':'90分','1h':'1小時','1d':'1天','5d':'5天','1wk':'1週','1mo':'1個月','3mo':'3個月'}
@@ -292,8 +290,7 @@ def phase_intermediate(event , TABLE_NAME ):
                     items=[QuickReplyButton(action=PostbackAction(label=v, display_text=f'數據頻率：{v}',data=f'interval={k}')) for k, v in mode_dict.items() ]
                 )
             )
-        )
-        
+        )      
       if event.type=="postback" and event.postback.data.split('=')[0]=="interval":
         update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
         record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, period, interval")    
@@ -315,7 +312,6 @@ def phase_intermediate(event , TABLE_NAME ):
                 )
             )
         )
-
       if event.type=="postback" and event.postback.data.split('=')[0]=="period":
         record = update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
         mode_dict = {'1m':'1分','15m':'15分','60m':'60分','90m':'90分','1h':'1小時','1d':'1天','5d':'5天','1wk':'1週','1mo':'1個月','3mo':'3個月'}
@@ -327,8 +323,7 @@ def phase_intermediate(event , TABLE_NAME ):
                     items=[QuickReplyButton(action=PostbackAction(label=v, display_text=f'數據頻率：{v}',data=f'interval={k}')) for k, v in mode_dict.items() ]
                 )
             )
-        )
-        
+        )    
       if event.type=="postback" and event.postback.data.split('=')[0]=="interval":
         record = update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
         mode_dict = {'MACD':'MACD','KD':'KD','RSI':'RSI'}
@@ -341,7 +336,6 @@ def phase_intermediate(event , TABLE_NAME ):
                 )
             )
         )
-
       if event.type=="postback" and event.postback.data.split('=')[0]=="indicator":
 
         update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
@@ -353,10 +347,27 @@ def phase_intermediate(event , TABLE_NAME ):
  
 
 
-# # 加入好友事件
-# @handler.add(FollowEvent)
-# def handle_follow(event):
-#     line_bot_api.reply_message( event.reply_token,TextSendMessage(text="你好")  )
+    if "機器學習預測" in problem_type :
+      if event.type=="message":
+        update_record(event.source.user_id, "stock", event.message.text , TABLE_NAME )
+        mode_dict = {'LSTM':'LSTM','RF':'RF'}
+        line_bot_api.reply_message(
+          event.reply_token,
+            TextSendMessage(
+                text=f"請選擇預測模型", 
+                quick_reply=QuickReply(
+                    items=[QuickReplyButton(action=PostbackAction(label=v, display_text=f'預測模型：{v}',data=f'model={k}')) for k, v in mode_dict.items() ]
+                )
+            )
+        )
+      
+      if event.type=="postback" and event.postback.data.split('=')[0]=="model":
+        update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
+        record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, period, model")    
+        line_bot_api.reply_message(event.reply_token,TextSendMessage(text=str(record)))
+
+      
+
 
 # 文字事件
 @handler.add(MessageEvent, message=TextMessage)
@@ -377,7 +388,11 @@ def handle_postback(event):
       phase_start(event,"歷史資料" ,  'your_table' )
     if event.postback.data=="技術分析" :     
       phase_start(event,"技術分析" ,  'your_table' )
-    if event.postback.data.startswith('period=') or event.postback.data.startswith('interval=') or event.postback.data.startswith('indicator='):
+    if event.postback.data=="即時查詢" :     
+      phase_start(event,"即時查詢" ,  'your_table' )
+    if event.postback.data=="機器學習預測" :     
+      phase_start(event,"機器學習預測" ,  'your_table' ) 
+    if event.postback.data.startswith('period=') or event.postback.data.startswith('interval=') or event.postback.data.startswith('indicator=') event.postback.data.startswith('model='):
       phase_intermediate(event, 'your_table')
    
 #主程式
