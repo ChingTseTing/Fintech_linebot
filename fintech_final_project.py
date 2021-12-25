@@ -264,7 +264,6 @@ def init_table(TABLE_NAME):
             model VARCHAR ( 20 ) NOT NULL,
             result_model VARCHAR ( 50 ) NOT NULL,
             predicted_price VARCHAR ( 50 ) NOT NULL
-            
         );"""
         cursor.execute(create_table_query)
         conn.commit()
