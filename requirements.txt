@@ -1,9 +1,6 @@
-line-bot-sdk 
-bs4 
-flask  
-datetime 
-pandas 
-scipy
+line-bot-sdk
+bs4
+flask
 yfinance
 pyimgur
 psycopg2
