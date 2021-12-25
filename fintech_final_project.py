@@ -439,7 +439,7 @@ def phase_intermediate(event , TABLE_NAME ):
         predicted_price , img_uri = LSTM_model(record)
         out=[]
         out.append( ImageSendMessage(original_content_url=img_uri, preview_image_url=img_uri) )
-        out.append( TextSendMessage(text="預測價格為: "+predicted_price) )        
+        out.append( TextSendMessage(text="預測價格為: "+ str(predicted_stock_price1[0][0]) ) )        
         line_bot_api.reply_message(event.reply_token,out)
 
 
