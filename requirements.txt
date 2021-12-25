@@ -10,7 +10,6 @@ pyshorteners
 scipy
 yfinance
 pyimgur
-seaborn
 mpl_finance
 psycopg2
 mplfinance
