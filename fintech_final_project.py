@@ -437,7 +437,8 @@ def phase_intermediate(event , TABLE_NAME ):
         )
       if event.type=="postback" and event.postback.data.split('=')[0]=="model":
         update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
-        record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, model")         
+        record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, model") 
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text= "訓練中..."))
         predicted_stock_price1 , img_uri = LSTM_model(record)
         update_record(event.source.user_id, "result_model" , str(img_uri) , TABLE_NAME )
         update_record(event.source.user_id, "predicted_price" , str(predicted_stock_price1[0][0]) , TABLE_NAME )
