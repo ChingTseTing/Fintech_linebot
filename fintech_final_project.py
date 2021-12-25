@@ -433,7 +433,7 @@ def phase_intermediate(event , TABLE_NAME ):
         # line_bot_api.reply_message(event.reply_token,TextSendMessage(text=str(record)))
 
       
-        flex_message = FlexSendMessage( alt_text='123', contents= progress_bar(record) )
+        flex_message = FlexSendMessage( alt_text='', contents= progress_bar(record) )
         line_bot_api.reply_message(event.reply_token, flex_message)
 
 # 文字事件
@@ -461,7 +461,8 @@ def handle_postback(event):
       phase_start(event,"機器學習預測" ,  'your_table' ) 
     if event.postback.data.startswith('period=') or event.postback.data.startswith('interval=') or event.postback.data.startswith('indicator=') or event.postback.data.startswith('model='):
       phase_intermediate(event, 'your_table')
-   
+    if event.postback.data=="result" :     
+      line_bot_api.reply_message(event.reply_token,TextSendMessage(text="lala"))   
 #主程式
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
