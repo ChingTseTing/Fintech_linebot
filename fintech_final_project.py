@@ -178,23 +178,23 @@ def LSTM_model(record):
   #使用sc的 inverse_transform將股價轉為歸一化前
   predicted_stock_price1 = sc.inverse_transform(predicted_stock_price1)
 
-  #plot
-  fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.15, subplot_titles=( 'train loss' , 'prediction'), row_width=[0.6, 0.4])
-  fig.add_trace(go.Scatter(  y=history.history["loss"], mode='lines' ,name='loss', showlegend=True)  , row=1, col=1 ) 
-  fig.add_trace(go.Scatter(x=test.index, y=test['Close'].values, mode='lines' ,name='Real Stock Price', showlegend=True)  , row=2, col=1 ) 
-  fig.add_trace(go.Scatter(x=test.index, y=predicted_stock_price.reshape(len(predicted_stock_price),), mode='lines' ,name='Predicted Stock Price', showlegend=True)  , row=2, col=1 )
-  fig['layout']['yaxis']['title']='loss'
-  fig['layout']['xaxis']['title']='epoch'
-  fig['layout']['yaxis2']['title']='price'
-  fig.update_layout(margin=dict(l=30, r=30, t=30, b=30) , template='plotly_dark',paper_bgcolor ='rgb(10,10,10)')
-  fig.update(layout_xaxis_rangeslider_visible=False)
+#   #plot
+#   fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.15, subplot_titles=( 'train loss' , 'prediction'), row_width=[0.6, 0.4])
+#   fig.add_trace(go.Scatter(  y=history.history["loss"], mode='lines' ,name='loss', showlegend=True)  , row=1, col=1 ) 
+#   fig.add_trace(go.Scatter(x=test.index, y=test['Close'].values, mode='lines' ,name='Real Stock Price', showlegend=True)  , row=2, col=1 ) 
+#   fig.add_trace(go.Scatter(x=test.index, y=predicted_stock_price.reshape(len(predicted_stock_price),), mode='lines' ,name='Predicted Stock Price', showlegend=True)  , row=2, col=1 )
+#   fig['layout']['yaxis']['title']='loss'
+#   fig['layout']['xaxis']['title']='epoch'
+#   fig['layout']['yaxis2']['title']='price'
+#   fig.update_layout(margin=dict(l=30, r=30, t=30, b=30) , template='plotly_dark',paper_bgcolor ='rgb(10,10,10)')
+#   fig.update(layout_xaxis_rangeslider_visible=False)
 
-  fig.write_image("send.png")
-  CLIENT_ID = "08680019f3643c6"  #"TingChingTse"
-  PATH = "send.png"
-  im = pyimgur.Imgur(CLIENT_ID)
-  uploaded_image = im.upload_image(PATH, title="Uploaded with PyImgur")
-  return predicted_stock_price1 ,uploaded_image.link
+#   fig.write_image("send.png")
+#   CLIENT_ID = "08680019f3643c6"  #"TingChingTse"
+#   PATH = "send.png"
+#   im = pyimgur.Imgur(CLIENT_ID)
+#   uploaded_image = im.upload_image(PATH, title="Uploaded with PyImgur")
+  return predicted_stock_price1 #,uploaded_image.link
 
 
 
@@ -469,8 +469,8 @@ def handle_postback(event):
     if event.postback.data=="機器學習預測" :     
 #       phase_start(event,"機器學習預測" ,  'your_table' ) 
       record=('機器學習預測','2330.TW') 
-      predicted_stock_price1 , img_uri = LSTM_model(record)
-      line_bot_api.reply_message(event.reply_token, TextSendMessage(text= "Done"))
+      predicted_stock_price1  = LSTM_model(record)
+      line_bot_api.reply_message(event.reply_token, TextSendMessage(text= str(predicted_stock_price1[0][0])))
 
     
     if event.postback.data.startswith('period=') or event.postback.data.startswith('interval=') or event.postback.data.startswith('indicator=') or event.postback.data.startswith('model='):
