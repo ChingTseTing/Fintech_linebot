@@ -439,8 +439,9 @@ def phase_intermediate(event , TABLE_NAME ):
         record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, model")         
         predicted_stock_price1 , img_uri = LSTM_model(record)
         out=[]
+        mssg="預測價格為: "+ str(predicted_stock_price1[0][0])
         out.append( ImageSendMessage(original_content_url=img_uri, preview_image_url=img_uri) )
-        out.append( TextSendMessage(text="預測價格為: "+ str(predicted_stock_price1[0][0]) ) )        
+        out.append( TextSendMessage(text= mssg) )        
         line_bot_api.reply_message(event.reply_token,out)
 
 
