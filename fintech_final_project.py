@@ -437,7 +437,7 @@ def phase_intermediate(event , TABLE_NAME ):
       if event.type=="postback" and event.postback.data.split('=')[0]=="model":
         update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
         record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, model")         
-        predicted_price , img_uri = LSTM_model(record)
+        predicted_stock_price1 , img_uri = LSTM_model(record)
         out=[]
         out.append( ImageSendMessage(original_content_url=img_uri, preview_image_url=img_uri) )
         out.append( TextSendMessage(text="預測價格為: "+ str(predicted_stock_price1[0][0]) ) )        
