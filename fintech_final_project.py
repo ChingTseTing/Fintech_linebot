@@ -470,7 +470,7 @@ def handle_postback(event):
 #       phase_start(event,"機器學習預測" ,  'your_table' ) 
       record=('機器學習預測','2330.TW') 
       predicted_stock_price1  = LSTM_model(record)
-      line_bot_api.reply_message(event.reply_token, TextSendMessage(text= str(predicted_stock_price1[0][0])))
+#       line_bot_api.reply_message(event.reply_token, TextSendMessage(text= str(predicted_stock_price1[0][0])))
 
     
     if event.postback.data.startswith('period=') or event.postback.data.startswith('interval=') or event.postback.data.startswith('indicator=') or event.postback.data.startswith('model='):
