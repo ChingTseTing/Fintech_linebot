@@ -26,6 +26,7 @@ import plotly.express as px
 import talib as ta
 from talib import abstract
 
+import time
 
 
 app = Flask(__name__)
@@ -433,10 +434,9 @@ def phase_intermediate(event , TABLE_NAME ):
         
         
         out=[]
-        la = 0 
         out.append(  TextSendMessage(text="aaa")    )
-        for i in range(0,100000):
-          la=la+1
+       
+        time.sleep(20)
         out.append(  TextSendMessage(text="bbb")    )
         line_bot_api.reply_message(event.reply_token,out ) 
 
