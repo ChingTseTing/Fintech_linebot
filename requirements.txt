@@ -18,3 +18,4 @@ plotly==5.3.1
 kaleido
 sklearn
 keras
+tensorflow
