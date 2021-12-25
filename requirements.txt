@@ -6,9 +6,7 @@ pandas
 scipy
 yfinance
 pyimgur
-mpl_finance
 psycopg2
-mplfinance
 plotly==5.3.1
 kaleido
 sklearn
