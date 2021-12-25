@@ -476,8 +476,8 @@ def phase_intermediate(event , TABLE_NAME ):
           line_bot_api.reply_message(event.reply_token,out )
         if record[2]=="RF":
           out = RF_model(record)
-          line_bot_api.reply_message(event.reply_token,out )
-
+          line_bot_api.reply_message(event.reply_token, TextSendMessage(text= out )  )
+            
 
 # 文字事件
 @handler.add(MessageEvent, message=TextMessage)
