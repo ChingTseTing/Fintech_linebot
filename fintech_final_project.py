@@ -28,7 +28,11 @@ from keras.layers import Dense
 from keras.layers import LSTM
 from keras.layers import Dropout,BatchNormalization
 import keras
-
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
+from sklearn.metrics import mean_squared_error
+from sklearn import metrics
 
 app = Flask(__name__)
 
@@ -202,7 +206,26 @@ def LSTM_model(record):
   uploaded_image = im.upload_image(PATH, title="Uploaded with PyImgur")
   return predicted_stock_price1 ,uploaded_image.link , short_model_summary
 
-
+def RF_model(record):
+  df = get_stock_index( get_stock(record[1] ,'3y' , '1d' )   )
+  X_o = df.iloc[:, :].values
+  X_o = np.delete(X_o, 3, axis = 1)
+  prediction = np.reshape(X_o[len(df)-1],(1,df.shape[1]-1))
+  X = np.delete(X_o, len(df)-1, axis = 0)
+  Y_o = df['Close'].shift(-1).values
+  Y = np.delete(Y_o, len(df)-1, axis = 0)
+  X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=1)
+  forest = RandomForestRegressor(n_estimators=1000, criterion="squared_error", random_state=1, n_jobs=-1)
+  forest.fit(X_train, y_train)
+  y_train_pred = forest.predict(X_train)
+  y_test_pred = forest.predict(X_test)
+  RMSE = f'RMSE train:{metrics.mean_squared_error(y_train, y_train_pred , squared=False):.3f}  RMSE test:{metrics.mean_squared_error(y_test, y_test_pred , squared=False):.3f}'
+  MAPE = f'MAPE train:{metrics.mean_absolute_percentage_error(y_train, y_train_pred):.3f}  MAPE test:{metrics.mean_absolute_percentage_error(y_test, y_test_pred):.3f}'
+  MAE = f'MAE train:{metrics.mean_absolute_error(y_train, y_train_pred ):.3f}  MAE test:{metrics.mean_absolute_error(y_test, y_test_pred):.3f}'
+  MSE = f'MSE train:{metrics.mean_squared_error(y_train, y_train_pred ):.3f}  MAE test:{metrics.mean_squared_error(y_test, y_test_pred):.3f}'
+  R_2 = f'R^2 train:{r2_score(y_train, y_train_pred ):.3f}  R^2 test:{r2_score(y_test, y_test_pred):.3f}'
+  all = RMSE + "\n" + MAPE + "\n" + MAE + "\n" + MSE + "\n" +R_2 +"\n"+ "價格預測:" + str(forest.predict(prediction)[0])
+  return all
 
 # rich menu 功能選單設置 
 richmenu_1 = RichMenu(
@@ -444,24 +467,16 @@ def phase_intermediate(event , TABLE_NAME ):
       if event.type=="postback" and event.postback.data.split('=')[0]=="model":
         update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
         record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, model") 
-#         line_bot_api.reply_message(event.reply_token, TextSendMessage(text= "訓練中..."))
-        predicted_stock_price1 , img_uri , model_summary = LSTM_model(record)
-#         update_record(event.source.user_id, "result_model" , str(img_uri) , TABLE_NAME )
-#         update_record(event.source.user_id, "predicted_price" , str(predicted_stock_price1[0][0]) , TABLE_NAME )
-#         out=[]
-#         mssg="預測價格為: "+ str(predicted_stock_price1[0][0])
-#         out.append( ImageSendMessage(original_content_url=img_uri, preview_image_url=img_uri) )
-#         out.append( TextSendMessage(text= mssg) )        
-#         line_bot_api.reply_message(event.reply_token, TextSendMessage(text= "Done"))
-   
-#         record = find_record(event.source.user_id, 'your_table', "problem ,stock, model, result_model, predicted_price")  
-        out=[]
-#         out.append( TextSendMessage(text= "以下為模型"+record[2]+"預測"+ record[1]  + "架構" ) )                
-#         out.append( TextSendMessage(text= model_summary ) )                
-        out.append( TextSendMessage(text= "以下為模型"+record[2]+"預測"+ record[1]  + "的結果" ) )                
-        out.append( ImageSendMessage(original_content_url=img_uri, preview_image_url=img_uri) )
-        out.append( TextSendMessage(text= "預測價格為: "+ str(predicted_stock_price1[0][0]) ) )
-        line_bot_api.reply_message(event.reply_token,out )
+        if record[2]=="LSTM":
+          predicted_stock_price1 , img_uri , model_summary = LSTM_model(record)
+          out=[]
+          out.append( TextSendMessage(text= "以下為模型"+record[2]+"預測"+ record[1]  + "的結果" ) )                
+          out.append( ImageSendMessage(original_content_url=img_uri, preview_image_url=img_uri) )
+          out.append( TextSendMessage(text= "預測價格為: "+ str(predicted_stock_price1[0][0]) ) )
+          line_bot_api.reply_message(event.reply_token,out )
+        if record[2]=="RF":
+          out = RF_model(record)
+          line_bot_api.reply_message(event.reply_token,out )
 
 
 # 文字事件
