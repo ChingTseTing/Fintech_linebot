@@ -437,9 +437,9 @@ def phase_intermediate(event , TABLE_NAME ):
       if event.type=="postback" and event.postback.data.split('=')[0]=="model":
         update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
         record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, model")         
-        predicted_stock_price1 , img_uri = LSTM_model(record)
-        out=[]
-        mssg="預測價格為: "+ str(predicted_stock_price1[0][0])
+#         predicted_stock_price1 , img_uri = LSTM_model(record)
+#         out=[]
+#         mssg="預測價格為: "+ str(predicted_stock_price1[0][0])
 #         out.append( ImageSendMessage(original_content_url=img_uri, preview_image_url=img_uri) )
 #         out.append( TextSendMessage(text= mssg) )        
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text= "Done"))
@@ -467,7 +467,12 @@ def handle_postback(event):
     if event.postback.data=="即時查詢" :     
       phase_start(event,"即時查詢" ,  'your_table' )
     if event.postback.data=="機器學習預測" :     
-      phase_start(event,"機器學習預測" ,  'your_table' ) 
+#       phase_start(event,"機器學習預測" ,  'your_table' ) 
+      record=('機器學習預測','2330.TW') 
+      predicted_stock_price1 , img_uri = LSTM_model(record)
+      line_bot_api.reply_message(event.reply_token, TextSendMessage(text= "Done"))
+
+    
     if event.postback.data.startswith('period=') or event.postback.data.startswith('interval=') or event.postback.data.startswith('indicator=') or event.postback.data.startswith('model='):
       phase_intermediate(event, 'your_table')
 
