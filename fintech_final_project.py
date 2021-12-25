@@ -433,7 +433,7 @@ def phase_intermediate(event , TABLE_NAME ):
         # line_bot_api.reply_message(event.reply_token,TextSendMessage(text=str(record)))
 
       
-        flex_message = FlexSendMessage( alt_text='', contents= progress_bar(record) )
+        flex_message = FlexSendMessage( alt_text='13', contents= progress_bar(record) )
         line_bot_api.reply_message(event.reply_token, flex_message)
 
 # 文字事件
