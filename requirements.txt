@@ -1,12 +1,8 @@
 line-bot-sdk 
 bs4 
-flask 
-pymongo 
+flask  
 datetime 
 pandas 
-SnowNLP 
-emoji 
-pyshorteners 
 scipy
 yfinance
 pyimgur
