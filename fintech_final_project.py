@@ -122,7 +122,7 @@ def analysis_plot(record):
 
 
 def LSTM_model(record):
-  new_df = get_stock_index( get_stock(record[1] ,'3y' , '1d' )   )
+  new_df = get_stock_index( get_stock(record[1] ,'1y' , '1d' )   )
   #切分Test集
   train_percent = 0.7
   train = new_df.head(int(new_df.shape[0]*train_percent))
@@ -438,15 +438,22 @@ def phase_intermediate(event , TABLE_NAME ):
       if event.type=="postback" and event.postback.data.split('=')[0]=="model":
         update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
         record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, model") 
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text= "訓練中..."))
+#         line_bot_api.reply_message(event.reply_token, TextSendMessage(text= "訓練中..."))
         predicted_stock_price1 , img_uri = LSTM_model(record)
-        update_record(event.source.user_id, "result_model" , str(img_uri) , TABLE_NAME )
-        update_record(event.source.user_id, "predicted_price" , str(predicted_stock_price1[0][0]) , TABLE_NAME )
+#         update_record(event.source.user_id, "result_model" , str(img_uri) , TABLE_NAME )
+#         update_record(event.source.user_id, "predicted_price" , str(predicted_stock_price1[0][0]) , TABLE_NAME )
 #         out=[]
 #         mssg="預測價格為: "+ str(predicted_stock_price1[0][0])
 #         out.append( ImageSendMessage(original_content_url=img_uri, preview_image_url=img_uri) )
 #         out.append( TextSendMessage(text= mssg) )        
 #         line_bot_api.reply_message(event.reply_token, TextSendMessage(text= "Done"))
+   
+#         record = find_record(event.source.user_id, 'your_table', "problem ,stock, model, result_model, predicted_price")  
+        out=[]
+        out.append( TextSendMessage(text= "以下為模型"+record[2]+"預測"+ record[1]  + "的結果" ) )                
+        out.append( ImageSendMessage(original_content_url=img_uri, preview_image_url=img_uri) )
+        out.append( TextSendMessage(text= "預測價格為: "+ str(predicted_stock_price1[0][0]) ) )
+        line_bot_api.reply_message(event.reply_token,out )
 
 
 # 文字事件
@@ -456,16 +463,8 @@ def handle_message(event):
     
     if len(get_stock(event.message.text ,'3y' ,'1d' ))!=0:
       phase_intermediate(event, 'your_table')
-    if event.message.text=="機器學習預測結果":
       
-      
-      record = find_record(event.source.user_id, 'your_table', "problem ,stock, model, result_model, predicted_price")  
-      out=[]
-      out.append( TextSendMessage(text= "以下為預測"+ record[1] + record[2] + "的結果" ) )                
-      out.append( ImageSendMessage(original_content_url=record[3], preview_image_url=record[0]) )
-      out.append( TextSendMessage(text= "預測價格為: "+ record[4] ) )
-      line_bot_api.reply_message(event.reply_token,out )
-
+   
 
 # postback event事件
 @handler.add(PostbackEvent)
