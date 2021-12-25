@@ -175,7 +175,7 @@ def progress_bar(record):
               "type": "button",
               "action": {
                 "type": "postback",
-                "label": "結果",
+                "label": "點我更新狀態",
                 "data": "result"
               },
               "color": "#ffffff5A",
@@ -430,11 +430,19 @@ def phase_intermediate(event , TABLE_NAME ):
       if event.type=="postback" and event.postback.data.split('=')[0]=="model":
         update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
         record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, model")    
-        # line_bot_api.reply_message(event.reply_token,TextSendMessage(text=str(record)))
+        
+        
+        out=[]
+        la = 0 
+        out.append(  TextSendMessage(text="aaa")    )
+        for i in range(0,100000):
+          la=la+1
+        out.append(  TextSendMessage(text="bbb")    )
+        line_bot_api.reply_message(event.reply_token,out ) 
 
-      
-        flex_message = FlexSendMessage( alt_text='13', contents= progress_bar(record) )
-        line_bot_api.reply_message(event.reply_token, flex_message)
+        # line_bot_api.reply_message(event.reply_token,TextSendMessage(text=str(record))) 
+        # flex_message = FlexSendMessage( alt_text='123', contents= progress_bar(record) )
+        # line_bot_api.reply_message(event.reply_token, flex_message)
 
 # 文字事件
 @handler.add(MessageEvent, message=TextMessage)
@@ -462,7 +470,12 @@ def handle_postback(event):
     if event.postback.data.startswith('period=') or event.postback.data.startswith('interval=') or event.postback.data.startswith('indicator=') or event.postback.data.startswith('model='):
       phase_intermediate(event, 'your_table')
     if event.postback.data=="result" :     
-      line_bot_api.reply_message(event.reply_token,TextSendMessage(text="lala"))   
+      line_bot_api.reply_message(event.reply_token,TextSendMessage(text="lala"))  
+
+
+
+
+
 #主程式
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
