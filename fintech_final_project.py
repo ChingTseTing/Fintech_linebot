@@ -122,7 +122,7 @@ def analysis_plot(record):
 
 
 def LSTM_model(record):
-  new_df = get_stock_index( get_stock(record[1] ,'6mo' , '1d' )   )
+  new_df = get_stock_index( get_stock(record[1] ,'8mo' , '1d' )   )
   #切分Test集
   train_percent = 0.7
   train = new_df.head(int(new_df.shape[0]*train_percent))
