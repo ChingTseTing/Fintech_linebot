@@ -155,7 +155,7 @@ def LSTM_model(record):
 
 
   stringlist = []
-  regression.summary(print_fn=lambda x: stringlist.append(x))
+  regressor.summary(print_fn=lambda x: stringlist.append(x))
   short_model_summary = "\n".join(stringlist)
 
 
