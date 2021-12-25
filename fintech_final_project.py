@@ -153,6 +153,12 @@ def LSTM_model(record):
   regressor.add(Dense(units = 1))  #Ouput Layer
   regressor.compile(optimizer = 'adam', loss = 'mean_squared_error') #optimizer:Adam, loss:MSE
 
+
+  stringlist = []
+  regression.summary(print_fn=lambda x: stringlist.append(x))
+  short_model_summary = "\n".join(stringlist)
+
+
   # type(regressor.summary())
   # start training
   history = regressor.fit(X_train, y_train, epochs = 100, batch_size = 16)
@@ -194,7 +200,7 @@ def LSTM_model(record):
   PATH = "send.png"
   im = pyimgur.Imgur(CLIENT_ID)
   uploaded_image = im.upload_image(PATH, title="Uploaded with PyImgur")
-  return predicted_stock_price1 ,uploaded_image.link
+  return predicted_stock_price1 ,uploaded_image.link , short_model_summary
 
 
 
@@ -439,7 +445,7 @@ def phase_intermediate(event , TABLE_NAME ):
         update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
         record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, model") 
 #         line_bot_api.reply_message(event.reply_token, TextSendMessage(text= "訓練中..."))
-        predicted_stock_price1 , img_uri = LSTM_model(record)
+        predicted_stock_price1 , img_uri , model_summary = LSTM_model(record)
 #         update_record(event.source.user_id, "result_model" , str(img_uri) , TABLE_NAME )
 #         update_record(event.source.user_id, "predicted_price" , str(predicted_stock_price1[0][0]) , TABLE_NAME )
 #         out=[]
@@ -450,6 +456,8 @@ def phase_intermediate(event , TABLE_NAME ):
    
 #         record = find_record(event.source.user_id, 'your_table', "problem ,stock, model, result_model, predicted_price")  
         out=[]
+        out.append( TextSendMessage(text= "以下為模型"+record[2]+"預測"+ record[1]  + "架構" ) )                
+        out.append( TextSendMessage(text= model_summary ) )                
         out.append( TextSendMessage(text= "以下為模型"+record[2]+"預測"+ record[1]  + "的結果" ) )                
         out.append( ImageSendMessage(original_content_url=img_uri, preview_image_url=img_uri) )
         out.append( TextSendMessage(text= "預測價格為: "+ str(predicted_stock_price1[0][0]) ) )
