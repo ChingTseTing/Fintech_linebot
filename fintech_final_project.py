@@ -122,7 +122,7 @@ def analysis_plot(record):
 
 
 def LSTM_model(record):
-  new_df = get_stock_index( get_stock(record[1] ,'8mo' , '1d' )   )
+  new_df = get_stock_index( get_stock(record[1] ,'9mo' , '1d' )   )
   #切分Test集
   train_percent = 0.7
   train = new_df.head(int(new_df.shape[0]*train_percent))
@@ -456,8 +456,8 @@ def phase_intermediate(event , TABLE_NAME ):
    
 #         record = find_record(event.source.user_id, 'your_table', "problem ,stock, model, result_model, predicted_price")  
         out=[]
-        out.append( TextSendMessage(text= "以下為模型"+record[2]+"預測"+ record[1]  + "架構" ) )                
-        out.append( TextSendMessage(text= model_summary ) )                
+#         out.append( TextSendMessage(text= "以下為模型"+record[2]+"預測"+ record[1]  + "架構" ) )                
+#         out.append( TextSendMessage(text= model_summary ) )                
         out.append( TextSendMessage(text= "以下為模型"+record[2]+"預測"+ record[1]  + "的結果" ) )                
         out.append( ImageSendMessage(original_content_url=img_uri, preview_image_url=img_uri) )
         out.append( TextSendMessage(text= "預測價格為: "+ str(predicted_stock_price1[0][0]) ) )
