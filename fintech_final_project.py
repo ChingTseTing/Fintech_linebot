@@ -178,23 +178,23 @@ def LSTM_model(record):
   #使用sc的 inverse_transform將股價轉為歸一化前
   predicted_stock_price1 = sc.inverse_transform(predicted_stock_price1)
 
-#   #plot
-#   fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.15, subplot_titles=( 'train loss' , 'prediction'), row_width=[0.6, 0.4])
-#   fig.add_trace(go.Scatter(  y=history.history["loss"], mode='lines' ,name='loss', showlegend=True)  , row=1, col=1 ) 
-#   fig.add_trace(go.Scatter(x=test.index, y=test['Close'].values, mode='lines' ,name='Real Stock Price', showlegend=True)  , row=2, col=1 ) 
-#   fig.add_trace(go.Scatter(x=test.index, y=predicted_stock_price.reshape(len(predicted_stock_price),), mode='lines' ,name='Predicted Stock Price', showlegend=True)  , row=2, col=1 )
-#   fig['layout']['yaxis']['title']='loss'
-#   fig['layout']['xaxis']['title']='epoch'
-#   fig['layout']['yaxis2']['title']='price'
-#   fig.update_layout(margin=dict(l=30, r=30, t=30, b=30) , template='plotly_dark',paper_bgcolor ='rgb(10,10,10)')
-#   fig.update(layout_xaxis_rangeslider_visible=False)
+  #plot
+  fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.15, subplot_titles=( 'train loss' , 'prediction'), row_width=[0.6, 0.4])
+  fig.add_trace(go.Scatter(  y=history.history["loss"], mode='lines' ,name='loss', showlegend=True)  , row=1, col=1 ) 
+  fig.add_trace(go.Scatter(x=test.index, y=test['Close'].values, mode='lines' ,name='Real Stock Price', showlegend=True)  , row=2, col=1 ) 
+  fig.add_trace(go.Scatter(x=test.index, y=predicted_stock_price.reshape(len(predicted_stock_price),), mode='lines' ,name='Predicted Stock Price', showlegend=True)  , row=2, col=1 )
+  fig['layout']['yaxis']['title']='loss'
+  fig['layout']['xaxis']['title']='epoch'
+  fig['layout']['yaxis2']['title']='price'
+  fig.update_layout(margin=dict(l=30, r=30, t=30, b=30) , template='plotly_dark',paper_bgcolor ='rgb(10,10,10)')
+  fig.update(layout_xaxis_rangeslider_visible=False)
 
-#   fig.write_image("send.png")
-#   CLIENT_ID = "08680019f3643c6"  #"TingChingTse"
-#   PATH = "send.png"
-#   im = pyimgur.Imgur(CLIENT_ID)
-#   uploaded_image = im.upload_image(PATH, title="Uploaded with PyImgur")
-  return predicted_stock_price1 #,uploaded_image.link
+  fig.write_image("send.png")
+  CLIENT_ID = "08680019f3643c6"  #"TingChingTse"
+  PATH = "send.png"
+  im = pyimgur.Imgur(CLIENT_ID)
+  uploaded_image = im.upload_image(PATH, title="Uploaded with PyImgur")
+  return predicted_stock_price1 ,uploaded_image.link
 
 
 
@@ -262,7 +262,9 @@ def init_table(TABLE_NAME):
             interval VARCHAR ( 20 ) NOT NULL,
             indicator VARCHAR ( 20 ) NOT NULL,
             model VARCHAR ( 20 ) NOT NULL,
-            result VARCHAR ( 20 ) NOT NULL
+            result_model VARCHAR ( 50 ) NOT NULL,
+            predicted_price VARCHAR ( 50 ) NOT NULL
+            
         );"""
         cursor.execute(create_table_query)
         conn.commit()
@@ -280,9 +282,9 @@ def drop_table(TABLE_NAME):
 
 def init_record(user_id,   problem  ,TABLE_NAME ):
     conn, cursor = access_database()
-    table_columns = '(user_id,  problem ,stock, period, interval, indicator ,model, result)'
-    postgres_insert_query = "INSERT INTO "+ TABLE_NAME + f" {table_columns} VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-    record = (user_id, problem ,'2330.TW', '3y', '1d', 'MACD','LSTM' ,'0')
+    table_columns = '(user_id,  problem ,stock, period, interval, indicator ,model, result_model , predicted_price)'
+    postgres_insert_query = "INSERT INTO "+ TABLE_NAME + f" {table_columns} VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    record = (user_id, problem ,'2330.TW', '3y', '1d', 'MACD','LSTM' ,'0','0')
     cursor.execute(postgres_insert_query, record)
     conn.commit()
     cursor.close()
@@ -437,7 +439,9 @@ def phase_intermediate(event , TABLE_NAME ):
       if event.type=="postback" and event.postback.data.split('=')[0]=="model":
         update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
         record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, model")         
-#         predicted_stock_price1 , img_uri = LSTM_model(record)
+        predicted_stock_price1 , img_uri = LSTM_model(record)
+        update_record(event.source.user_id, "result_model" , str(img_uri) , TABLE_NAME )
+        update_record(event.source.user_id, "predicted_price" , predicted_stock_price1[0][0] , TABLE_NAME )
 #         out=[]
 #         mssg="預測價格為: "+ str(predicted_stock_price1[0][0])
 #         out.append( ImageSendMessage(original_content_url=img_uri, preview_image_url=img_uri) )
@@ -452,6 +456,15 @@ def handle_message(event):
     
     if len(get_stock(event.message.text ,'3y' ,'1d' ))!=0:
       phase_intermediate(event, 'your_table')
+    if event.message.text=="機器學習預測結果":
+      
+      
+      record = find_record(event.source.user_id, 'your_table', "problem ,stock, model, result_model, predicted_price")  
+      out=[]
+      out.append( TextSendMessage(text= "以下為預測"+ record[1] + record[2] + "的結果" ) )                
+      out.append( ImageSendMessage(original_content_url=record[3], preview_image_url=record[0]) )
+      out.append( TextSendMessage(text= "預測價格為: "+ record[4] ) )
+      line_bot_api.reply_message(event.reply_token,out )
 
 
 # postback event事件
@@ -467,10 +480,7 @@ def handle_postback(event):
     if event.postback.data=="即時查詢" :     
       phase_start(event,"即時查詢" ,  'your_table' )
     if event.postback.data=="機器學習預測" :     
-#       phase_start(event,"機器學習預測" ,  'your_table' ) 
-      record=('機器學習預測','2330.TW') 
-      predicted_stock_price1  = LSTM_model(record)
-#       line_bot_api.reply_message(event.reply_token, TextSendMessage(text= str(predicted_stock_price1[0][0])))
+       phase_start(event,"機器學習預測" ,  'your_table' ) 
 
     
     if event.postback.data.startswith('period=') or event.postback.data.startswith('interval=') or event.postback.data.startswith('indicator=') or event.postback.data.startswith('model='):
