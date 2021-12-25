@@ -25,8 +25,11 @@ from plotly.subplots import make_subplots
 import plotly.express as px
 import talib as ta
 from talib import abstract
-
-import time
+from sklearn.preprocessing import MinMaxScaler 
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.layers import LSTM
+from keras.layers import Dropout,BatchNormalization
 
 
 app = Flask(__name__)
@@ -60,8 +63,7 @@ def get_stock(stock_id ,PERIOD , INTERVAL ):
   return tmp
 
 # 功能模組-求index
-def get_stock_index(record):
-  df =  get_stock( record[1] ,record[2] , record[3] )
+def get_stock_index(df):
   # Bias of moving average
   df['bias_MA_5'] =  ( df['Close']- ta.SMA(df['Close'], timeperiod=5)  ) / ta.SMA(df['Close'], timeperiod=5)
   df['bias_MA_10'] = ( df['Close']- ta.SMA(df['Close'], timeperiod=10)  ) / ta.SMA(df['Close'], timeperiod=10)
@@ -121,74 +123,81 @@ def analysis_plot(record):
   return uploaded_image.link
 
 
+def LSTM_model(record):
+  new_df = get_stock_index( get_stock(record[1] ,'3y' , '1d' )   )
+  #切分Test集
+  train_percent = 0.7
+  train = new_df.head(int(new_df.shape[0]*train_percent))
+  test_percent = 1-train_percent
+  test = new_df.tail(int(new_df.shape[0]*test_percent))
+  train_set = train['Close']
+  test_set = test['Close']
+  sc = MinMaxScaler(feature_range = (0, 1))
+  #需將資料做reshape的動作，使其shape為(資料長度,1) 
+  train_set= train_set.values.reshape(-1,1)
+  training_set_scaled = sc.fit_transform(train_set)  #train_set(stock price) normalize
+  X_train = [] 
+  y_train = []
+  for i in range(10,len(train_set)):
+    X_train.append(training_set_scaled[i-10:i-1, 0])  #第i天前的stock price
+    y_train.append(training_set_scaled[i, 0])  #第i天的stock price
+  X_train, y_train = np.array(X_train), np.array(y_train) 
+  X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
+  keras.backend.clear_session()
+  # Initialising the RNN
+  regressor = Sequential()
+  # Adding the first LSTM layer
+  regressor.add(LSTM(units = 100, return_sequences=True, input_shape = (X_train.shape[1], 1))) #units=number of neurons
+  regressor.add(Dropout(0.2))
+  # Adding a second LSTM layer
+  regressor.add(LSTM(units = 100))
+  regressor.add(Dropout(0.2))
+  regressor.add(Dense(units = 1))  #Ouput Layer
+  regressor.compile(optimizer = 'adam', loss = 'mean_squared_error') #optimizer:Adam, loss:MSE
 
-def progress_bar(record): 
-  bar  ={
-        "type": "bubble",
-        "body": {
-          "type": "box",
-          "layout": "vertical",
-          "contents": [
-            {
-              "type": "box",
-              "layout": "vertical",
-              "contents": [
-                {
-                  "type": "box",
-                  "layout": "vertical",
-                  "contents": [
-                    {
-                      "type": "text",
-                      "text": record[0],
-                      "color": "#ffffff",
-                      "weight": "bold",
-                      "size": "xl"
-                    },
-                    {
-                      "type": "text",
-                      "text": record[1]+ " | " +record[2],
-                      "color": "#ffffff",
-                      "size": "xs"
-                    }
-                  ]
-                },
-                {
-                  "type": "text",
-                  "text": "進度: 43%",
-                  "color": "#ffffff",
-                  "size": "xs"
-                }
-              ]
-            },
-            {
-              "type": "box",
-              "layout": "vertical",
-              "contents": [
-                {
-                  "type": "filler"
-                }
-              ],
-              "backgroundColor": "#ffffff5A",
-              "width": "43%",
-              "height": "6px"
-            },
-            {
-              "type": "button",
-              "action": {
-                "type": "postback",
-                "label": "點我更新狀態",
-                "data": "result"
-              },
-              "color": "#ffffff5A",
-              "margin": "md",
-              "style": "secondary",
-              "height": "sm"
-            }
-          ],
-          "backgroundColor": "#464F69"
-        }
-      }
-  return bar 
+  # type(regressor.summary())
+  # start training
+  history = regressor.fit(X_train, y_train, epochs = 100, batch_size = 16)
+  dataset_total = pd.concat((train['Close'], test['Close']), axis = 0)
+  inputs = dataset_total[len(dataset_total) - len(test) - 10:].values
+  inputs = inputs.reshape(-1,1)
+  inputs = sc.transform(inputs)
+  X_test = []
+  for i in range(10, len(inputs)):
+    X_test.append(inputs[i-10:i-1, 0])
+  X_test = np.array(X_test)
+  X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
+  predicted_stock_price = regressor.predict(X_test)
+  #使用sc的 inverse_transform將股價轉為歸一化前
+
+  predicted_stock_price = sc.inverse_transform(predicted_stock_price)
+
+  #預測
+  test_test=[]
+  test_test.append(inputs[len(inputs)-10:len(inputs)-1, 0])
+  test_test= np.reshape(test_test, (1, 9, 1))
+  predicted_stock_price1 = regressor.predict(test_test)
+  #使用sc的 inverse_transform將股價轉為歸一化前
+  predicted_stock_price1 = sc.inverse_transform(predicted_stock_price1)
+
+  #plot
+  fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.15, subplot_titles=( 'train loss' , 'prediction'), row_width=[0.6, 0.4])
+  fig.add_trace(go.Scatter(  y=history.history["loss"], mode='lines' ,name='loss', showlegend=True)  , row=1, col=1 ) 
+  fig.add_trace(go.Scatter(x=test.index, y=test['Close'].values, mode='lines' ,name='Real Stock Price', showlegend=True)  , row=2, col=1 ) 
+  fig.add_trace(go.Scatter(x=test.index, y=predicted_stock_price.reshape(len(predicted_stock_price),), mode='lines' ,name='Predicted Stock Price', showlegend=True)  , row=2, col=1 )
+  fig['layout']['yaxis']['title']='loss'
+  fig['layout']['xaxis']['title']='epoch'
+  fig['layout']['yaxis2']['title']='price'
+  fig.update_layout(margin=dict(l=30, r=30, t=30, b=30) , template='plotly_dark',paper_bgcolor ='rgb(10,10,10)')
+  fig.update(layout_xaxis_rangeslider_visible=False)
+
+  fig.write_image("send.png")
+  CLIENT_ID = "08680019f3643c6"  #"TingChingTse"
+  PATH = "send.png"
+  im = pyimgur.Imgur(CLIENT_ID)
+  uploaded_image = im.upload_image(PATH, title="Uploaded with PyImgur")
+  return predicted_stock_price1 ,uploaded_image.link
+
 
 
 # rich menu 功能選單設置 
@@ -421,28 +430,21 @@ def phase_intermediate(event , TABLE_NAME ):
         line_bot_api.reply_message(
           event.reply_token,
             TextSendMessage(
-                text=f"請選擇預測模型", 
+                text=f"請選擇預測模型\n(選擇後需要重新訓練,請稍等)", 
                 quick_reply=QuickReply(
                     items=[QuickReplyButton(action=PostbackAction(label=v, display_text=f'預測模型：{v}',data=f'model={k}')) for k, v in mode_dict.items() ]
                 )
             )
         )
-      
       if event.type=="postback" and event.postback.data.split('=')[0]=="model":
         update_record(event.source.user_id, event.postback.data.split('=')[0] , event.postback.data.split('=')[1] , TABLE_NAME )
-        record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, model")    
-        
-        
+        record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock, model")         
+        predicted_price , img_uri = LSTM_model(record)
         out=[]
-        out.append(  TextSendMessage(text="aaa")    )
-       
-        time.sleep(20)
-        out.append(  TextSendMessage(text="bbb")    )
-        line_bot_api.reply_message(event.reply_token,out ) 
+        out.append( ImageSendMessage(original_content_url=img_uri, preview_image_url=img_uri) )
+        out.append( TextSendMessage(text="預測價格為: "+predicted_price) )        
+        line_bot_api.reply_message(event.reply_token,out)
 
-        # line_bot_api.reply_message(event.reply_token,TextSendMessage(text=str(record))) 
-        # flex_message = FlexSendMessage( alt_text='123', contents= progress_bar(record) )
-        # line_bot_api.reply_message(event.reply_token, flex_message)
 
 # 文字事件
 @handler.add(MessageEvent, message=TextMessage)
@@ -469,9 +471,6 @@ def handle_postback(event):
       phase_start(event,"機器學習預測" ,  'your_table' ) 
     if event.postback.data.startswith('period=') or event.postback.data.startswith('interval=') or event.postback.data.startswith('indicator=') or event.postback.data.startswith('model='):
       phase_intermediate(event, 'your_table')
-    if event.postback.data=="result" :     
-      line_bot_api.reply_message(event.reply_token,TextSendMessage(text="lala"))  
-
 
 
 
