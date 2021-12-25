@@ -13,7 +13,6 @@ from linebot.models import *
 import numpy as np 
 import sys, os
 import pyimgur
-import seaborn as sns
 import yfinance as yf
 import pandas as pd
 import matplotlib.pyplot as plt
