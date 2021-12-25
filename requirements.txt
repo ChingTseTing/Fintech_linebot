@@ -12,3 +12,4 @@ kaleido
 sklearn
 keras
 tensorflow-cpu
+matplotlib
