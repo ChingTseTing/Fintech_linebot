@@ -15,7 +15,6 @@ import sys, os
 import pyimgur
 import yfinance as yf
 import pandas as pd
-import matplotlib.pyplot as plt
 import psycopg2
 import pandas as pd
 import plotly.graph_objects as go
