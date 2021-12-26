@@ -117,7 +117,7 @@ def analysis_plot(record):
   # Do not show OHLC's rangeslider plot 
   fig.update(layout_xaxis_rangeslider_visible=False)
   # save image
-  fig.write_image("send.png")
+  fig.write_image("send.png",engine='orca')
   CLIENT_ID = "08680019f3643c6"  #"TingChingTse"
   PATH = "send.png"
   im = pyimgur.Imgur(CLIENT_ID)
@@ -199,7 +199,7 @@ def LSTM_model(record):
   fig.update_layout(margin=dict(l=30, r=30, t=30, b=30) , template='plotly_dark',paper_bgcolor ='rgb(10,10,10)')
   fig.update(layout_xaxis_rangeslider_visible=False)
 
-  fig.write_image("send.png")
+  fig.write_image("send.png" , engine='orca')
   CLIENT_ID = "08680019f3643c6"  #"TingChingTse"
   PATH = "send.png"
   im = pyimgur.Imgur(CLIENT_ID)
