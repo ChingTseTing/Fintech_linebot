@@ -9,3 +9,4 @@ sklearn
 keras
 tensorflow-cpu
 kaleido
+requests
