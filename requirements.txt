@@ -8,3 +8,4 @@ plotly==5.3.1
 sklearn
 keras
 tensorflow-cpu
+psutil
