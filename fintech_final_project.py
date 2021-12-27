@@ -33,6 +33,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
 from sklearn.metrics import mean_squared_error
 from sklearn import metrics
+import requests
 
 app = Flask(__name__)
 
@@ -227,6 +228,296 @@ def RF_model(record):
   all = RMSE + "\n" + MAPE + "\n" + MAE + "\n" + MSE + "\n" +R_2 +"\n"+ "價格預測:" + str(forest.predict(prediction)[0])
   return all
 
+
+
+def stock_info(record):
+  headers = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36' }
+
+  flex = {
+      "type": "bubble",
+      "body": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "text",
+            "text": "台積電(2330) 半導體",
+            "weight": "bold",
+            "size": "xl",
+            "color": "#ffffff"
+          },
+          {
+            "type": "text",
+            "text": "606 ▲2(0.33%)",
+            "color": "#FF0000",
+            "margin": "none",
+            "size": "xl",
+            "weight": "bold"
+          },
+          {
+            "type": "text",
+            "text": "收盤 | 2021/12/27 14:30 更新",
+            "color": "#aaaaaa",
+            "margin": "xs",
+            "size": "sm"
+          },
+          {
+            "type": "box",
+            "layout": "baseline",
+            "margin": "none",
+            "contents": []
+          },
+          {
+            "type": "box",
+            "layout": "vertical",
+            "margin": "sm",
+            "spacing": "xs",
+            "contents": [
+              {
+                "type": "box",
+                "layout": "baseline",
+                "spacing": "sm",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "成交量",
+                    "color": "#aaaaaa",
+                    "size": "sm"
+                  },
+                  {
+                    "type": "text",
+                    "color": "#aaaaaa",
+                    "size": "sm",
+                    "wrap": True,
+                    "text": "16,230"
+                  }
+                ],
+                "margin": "md"
+              },
+              {
+                "type": "box",
+                "layout": "baseline",
+                "spacing": "sm",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "成交值(億)",
+                    "color": "#aaaaaa",
+                    "size": "sm",
+                    "margin": "none"
+                  },
+                  {
+                    "type": "text",
+                    "text": "98.64",
+                    "wrap": True,
+                    "color": "#aaaaaa",
+                    "size": "sm"
+                  }
+                ]
+              },
+              {
+                "type": "box",
+                "layout": "baseline",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "內盤",
+                    "color": "#aaaaaa",
+                    "size": "sm"
+                  },
+                  {
+                    "type": "text",
+                    "text": "7,275(45.39%)",
+                    "color": "#aaaaaa",
+                    "size": "sm"
+                  }
+                ]
+              },
+              {
+                "type": "box",
+                "layout": "baseline",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "外盤",
+                    "color": "#aaaaaa",
+                    "size": "sm"
+                  },
+                  {
+                    "type": "text",
+                    "text": "7,275(45.39%)",
+                    "color": "#aaaaaa",
+                    "size": "sm"
+                  }
+                ]
+              },
+              {
+                "type": "box",
+                "layout": "baseline",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "本益比 (同業平均)",
+                    "color": "#aaaaaa",
+                    "size": "sm"
+                  },
+                  {
+                    "type": "text",
+                    "text": "27.33 (31.61)",
+                    "color": "#aaaaaa",
+                    "size": "sm"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": "新聞",
+            "size": "xl",
+            "weight": "bold",
+            "margin": "xxl",
+            "color": "#ffffff"
+          },
+          {
+            "type": "button",
+            "action": {
+              "type": "uri",
+              "label": "action1",
+              "uri": "http://linecorp.com/1"
+            },
+            "margin": "sm",
+            "height": "sm",
+            "gravity": "top",
+            "style": "primary",
+            "color": "#808080"
+          },
+          {
+            "type": "button",
+            "action": {
+              "type": "uri",
+              "label": "action2",
+              "uri": "http://linecorp.com/2"
+            },
+            "height": "sm",
+            "style": "primary",
+            "margin": "sm",
+            "color": "#808080"
+          },
+          {
+            "type": "button",
+            "action": {
+              "type": "uri",
+              "label": "action3",
+              "uri": "http://linecorp.com/3"
+            },
+            "height": "sm",
+            "margin": "sm",
+            "style": "primary",
+            "color": "#808080"
+          },
+          {
+            "type": "button",
+            "action": {
+              "type": "uri",
+              "label": "action4",
+              "uri": "http://linecorp.com/4"
+            },
+            "margin": "sm",
+            "style": "primary",
+            "height": "sm",
+            "color": "#808080"
+          },
+          {
+            "type": "button",
+            "action": {
+              "type": "uri",
+              "label": ">> 更多",
+              "uri": "http://linecorp.com/"
+            },
+            "margin": "sm",
+            "height": "sm",
+            "style": "primary",
+            "color": "#808080",
+            "offsetTop": "none"
+          }
+        ],
+        "backgroundColor": "#404040"
+      }
+    }
+
+
+  url = "https://tw.stock.yahoo.com/quote/" + record[1]
+  a= requests.get(url ,headers =headers , allow_redirects= True)
+  a.encoding='utf-8'
+  soup = BeautifulSoup(a.text , 'html.parser' )
+
+  #名稱
+  title = soup.find('div',class_='D(f) Ai(c) Mb(6px)' ).find('h1',class_='C($c-link-text) Fw(b) Fz(24px) Mend(8px)').text
+  title = title+"(" + soup.find('div',class_='D(f) Ai(c) Mb(6px)' ).find('span',class_='C($c-icon) Fz(24px) Mend(20px)').text + ")"
+  title = title + " " + soup.find('div',class_='D(f) Ai(c) Mb(6px)' ).find('div',class_='Flxg(2)').text
+  flex['body']['contents'][0]['text']  =  title # print(title)
+
+  # 價格漲跌
+  if soup.find('div',class_='D(f) Fld(c) Ai(fs)' ).find('div',class_='D(f) Ai(fe) Mb(4px)').find('span',class_='Fz(32px) Fw(b) Lh(1) Mend(16px) D(f) Ai(c) C($c-trend-up)')!=None:
+    pr =  soup.find('div',class_='D(f) Fld(c) Ai(fs)' ).find('div',class_='D(f) Ai(fe) Mb(4px)').find('span',class_='Fz(32px) Fw(b) Lh(1) Mend(16px) D(f) Ai(c) C($c-trend-up)').text + " ▲"
+    pr = pr + soup.find('div',class_='D(f) Fld(c) Ai(fs)' ).find('div',class_='D(f) Ai(fe) Mb(4px)').find('span',class_='Fz(20px) Fw(b) Lh(1.2) Mend(4px) D(f) Ai(c) C($c-trend-up)').text
+    pr = pr + soup.find('div',class_='D(f) Fld(c) Ai(fs)' ).find('div',class_='D(f) Ai(fe) Mb(4px)').find('span',class_='Jc(fe) Fz(20px) Lh(1.2) Fw(b) D(f) Ai(c) C($c-trend-up)').text
+    flex['body']['contents'][1]['text'] = pr # print(pr)
+    flex['body']['contents'][1]['color'] = '#FF0000'
+
+  if soup.find('div',class_='D(f) Fld(c) Ai(fs)' ).find('div',class_='D(f) Ai(fe) Mb(4px)').find('span',class_='Fz(32px) Fw(b) Lh(1) Mend(16px) D(f) Ai(c) C($c-trend-up)')==None:
+    pr = soup.find('div',class_='D(f) Fld(c) Ai(fs)' ).find('div',class_='D(f) Ai(fe) Mb(4px)').find('span',class_='Fz(32px) Fw(b) Lh(1) Mend(16px) D(f) Ai(c) C($c-trend-down)').text + " ▼"
+    pr = pr + soup.find('div',class_='D(f) Fld(c) Ai(fs)' ).find('div',class_='D(f) Ai(fe) Mb(4px)').find('span',class_='Fz(20px) Fw(b) Lh(1.2) Mend(4px) D(f) Ai(c) C($c-trend-down)').text
+    pr = pr + soup.find('div',class_='D(f) Fld(c) Ai(fs)' ).find('div',class_='D(f) Ai(fe) Mb(4px)').find('span',class_='Jc(fe) Fz(20px) Lh(1.2) Fw(b) D(f) Ai(c) C($c-trend-down)').text
+    flex['body']['contents'][1]['text'] = pr # print(pr)
+    flex['body']['contents'][1]['color'] = '##00FF00'
+
+  # 時間
+  flex['body']['contents'][2]['text'] = soup.find('div',class_='D(f) Fld(c) Ai(fs)' ).find('span',class_='C(#6e7780) Fz(12px) Fw(b)').text
+  #成交量
+  flex['body']['contents'][4]['contents'][0]['contents'][0]['text'] = soup.find('div',class_='D(f) Fld(c) Ai(c) Fw(b) Pend(8px) Bdendc($bd-primary-divider) Bdends(s) Bdendw(1px)' ).find('span' ,class_="Fz(12px) C($c-icon)" ).text
+  flex['body']['contents'][4]['contents'][0]['contents'][1]['text'] = soup.find('div',class_='D(f) Fld(c) Ai(c) Fw(b) Pend(8px) Bdendc($bd-primary-divider) Bdends(s) Bdendw(1px)' ).find('span' ,class_="Fz(16px) C($c-link-text) Mb(4px)" ).text
+  #成交值
+  flex['body']['contents'][4]['contents'][1]['contents'][0]['text'] = soup.find('ul',class_='D(f) Fld(c) Flw(w) H(192px) Mx(-16px)' ).find_all('li',class_='price-detail-item H(32px) Mx(16px) D(f) Jc(sb) Ai(c) Bxz(bb) Px(0px) Py(4px) Bdbs(s) Bdbc($bd-primary-divider) Bdbw(1px)')[5].find_all('span')[0].text
+  flex['body']['contents'][4]['contents'][1]['contents'][1]['text'] = soup.find('ul',class_='D(f) Fld(c) Flw(w) H(192px) Mx(-16px)' ).find_all('li',class_='price-detail-item H(32px) Mx(16px) D(f) Jc(sb) Ai(c) Bxz(bb) Px(0px) Py(4px) Bdbs(s) Bdbc($bd-primary-divider) Bdbw(1px)')[5].find_all('span')[1].text
+  # 內盤
+  flex['body']['contents'][4]['contents'][2]['contents'][0]['text'] = soup.find('div',class_='D(f) Jc(sb) Ai(c) Mb(4px) Fz(16px)--mobile Fz(14px)' ).find_all('div',class_='C(#232a31) Fw(b)')[0].find_all('span')[0].text
+  flex['body']['contents'][4]['contents'][2]['contents'][1]['text'] = soup.find('div',class_='D(f) Jc(sb) Ai(c) Mb(4px) Fz(16px)--mobile Fz(14px)' ).find_all('div',class_='C(#232a31) Fw(b)')[0].find_all('span')[1].text
+  # 外盤
+  flex['body']['contents'][4]['contents'][3]['contents'][0]['text'] = soup.find('div',class_='D(f) Jc(sb) Ai(c) Mb(4px) Fz(16px)--mobile Fz(14px)' ).find_all('div',class_='C(#232a31) Fw(b)')[1].find_all('span')[2].text
+  flex['body']['contents'][4]['contents'][3]['contents'][1]['text'] = soup.find('div',class_='D(f) Jc(sb) Ai(c) Mb(4px) Fz(16px)--mobile Fz(14px)' ).find_all('div',class_='C(#232a31) Fw(b)')[1].find_all('span')[0].text
+  #本益比
+  flex['body']['contents'][4]['contents'][4]['contents'][0]['text'] = soup.find('div',class_='D(f) Fld(c) Ai(c) Fw(b) Px(8px) Bdendc($bd-primary-divider) Bdends(s) Bdendw(1px)' ).find('span',class_='Fz(12px) C($c-icon)').text  
+  flex['body']['contents'][4]['contents'][4]['contents'][1]['text'] = soup.find('div',class_='D(f) Fld(c) Ai(c) Fw(b) Px(8px) Bdendc($bd-primary-divider) Bdends(s) Bdendw(1px)' ).find('span',class_='Fz(16px) C($c-link-text) Mb(4px)').text 
+  # 個股新聞
+  url = "https://tw.stock.yahoo.com/quote/"+ record[1] +"/news"
+  a= requests.get(url ,headers =headers , allow_redirects= True)
+  a.encoding='utf-8'
+  soup = BeautifulSoup(a.text , 'html.parser' )
+
+  flex['body']['contents'][6]['action']['label'] = soup.find_all('div', class_='Ov(h) Pend(14%) Pend(44px)--sm1024')[0].find('h3', class_='Mt(0) Mb(8px)').text
+  flex['body']['contents'][6]['action']['uri']  = soup.find_all('div', class_='Ov(h) Pend(14%) Pend(44px)--sm1024')[0].find('a').get('href')
+
+  flex['body']['contents'][7]['action']['label'] = soup.find_all('div', class_='Ov(h) Pend(14%) Pend(44px)--sm1024')[1].find('h3', class_='Mt(0) Mb(8px)').text
+  flex['body']['contents'][7]['action']['uri']  = soup.find_all('div', class_='Ov(h) Pend(14%) Pend(44px)--sm1024')[1].find('a').get('href')
+
+  flex['body']['contents'][8]['action']['label'] = soup.find_all('div', class_='Ov(h) Pend(14%) Pend(44px)--sm1024')[2].find('h3', class_='Mt(0) Mb(8px)').text
+  flex['body']['contents'][8]['action']['uri']  = soup.find_all('div', class_='Ov(h) Pend(14%) Pend(44px)--sm1024')[2].find('a').get('href')
+
+  flex['body']['contents'][9]['action']['label'] = soup.find_all('div', class_='Ov(h) Pend(14%) Pend(44px)--sm1024')[3].find('h3', class_='Mt(0) Mb(8px)').text
+  flex['body']['contents'][9]['action']['uri']  = soup.find_all('div', class_='Ov(h) Pend(14%) Pend(44px)--sm1024')[3].find('a').get('href')
+
+  flex['body']['contents'][10]['action']['uri'] = url
+
+  return flex
+
+
+
+
+
+
+
 # rich menu 功能選單設置 
 richmenu_1 = RichMenu(
     size=RichMenuSize(width=2500, height=1686),
@@ -367,7 +658,11 @@ def phase_intermediate(event , TABLE_NAME ):
       if event.type=="message":
         update_record(event.source.user_id, "stock", event.message.text , TABLE_NAME )
         record = find_record(event.source.user_id, TABLE_NAME, "problem ,stock")    
-        line_bot_api.reply_message(event.reply_token,TextSendMessage(text=str(record)))
+        # line_bot_api.reply_message(event.reply_token,TextSendMessage(text=str(record)))
+        flex_message = FlexSendMessage( alt_text='行銷搬進大程式', contents= stock_info(record) )
+        line_bot_api.reply_message(event.reply_token, flex_message)
+
+
 
 
     if "歷史資料" in problem_type :
