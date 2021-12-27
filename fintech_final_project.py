@@ -34,6 +34,7 @@ from sklearn.metrics import r2_score
 from sklearn.metrics import mean_squared_error
 from sklearn import metrics
 import requests
+from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 
