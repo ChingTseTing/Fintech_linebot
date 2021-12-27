@@ -472,7 +472,7 @@ def stock_info(record):
     pr = pr + soup.find('div',class_='D(f) Fld(c) Ai(fs)' ).find('div',class_='D(f) Ai(fe) Mb(4px)').find('span',class_='Fz(20px) Fw(b) Lh(1.2) Mend(4px) D(f) Ai(c) C($c-trend-down)').text
     pr = pr + soup.find('div',class_='D(f) Fld(c) Ai(fs)' ).find('div',class_='D(f) Ai(fe) Mb(4px)').find('span',class_='Jc(fe) Fz(20px) Lh(1.2) Fw(b) D(f) Ai(c) C($c-trend-down)').text
     flex['body']['contents'][1]['text'] = pr # print(pr)
-    flex['body']['contents'][1]['color'] = '##00FF00'
+    flex['body']['contents'][1]['color'] = '#00FF00'
 
   # 時間
   flex['body']['contents'][2]['text'] = soup.find('div',class_='D(f) Fld(c) Ai(fs)' ).find('span',class_='C(#6e7780) Fz(12px) Fw(b)').text
