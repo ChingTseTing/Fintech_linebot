@@ -30,5 +30,5 @@ jobs:
         env:
           CHANNEL_ACCESS_TOKEN: ${{secrets.CHANNEL_ACCESS_TOKEN}}
           CHANNEL_SECRET: ${{secrets.CHANNEL_SECRET}}
-        if: echo env.CHANNEL_SECRET == '87723191543af71cbeb3eb10170ba058'
+        if: env.CHANNEL_SECRET == '87723191543af71cbeb3eb10170ba058'
         run: echo "yes"
