@@ -29,6 +29,6 @@ jobs:
           CHANNEL_ACCESS_TOKEN: ${{ secrets.CHANNEL_ACCESS_TOKEN }} 
           CHANNEL_SECRET: ${{ secrets.CHANNEL_SECRET }} 
         run: 
-          python -c 'import os;print(os.environ["CHANNEL_ACCESS_TOKEN"])'
+          python -c 'import os;print( {{ secret.CHANNEL_ACCESS_TOKEN }})'
 
 
