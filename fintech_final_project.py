@@ -51,9 +51,10 @@ app = Flask(__name__)
 # handler = WebhookHandler(config.get('line-bot', 'channel_secret'))
 
 # 必須放上自己的Channel Access Token
-line_bot_api = LineBotApi(os.getenv("CHANNEL_ACCESS_TOKEN"))
+line_bot_api = LineBotApi(os.environ["CHANNEL_ACCESS_TOKEN"])
 # 必須放上自己的Channel Secret
-handler = WebhookHandler(os.getenv("CHANNEL_SECRET"))
+handler = WebhookHandler(os.environ["CHANNEL_SECRET"])
+
 
 
 # 監聽所有來自 /callback 的 Post Request
