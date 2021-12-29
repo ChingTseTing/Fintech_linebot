@@ -11,3 +11,4 @@ tensorflow-cpu
 kaleido
 requests
 configparser
+python-dotenv
