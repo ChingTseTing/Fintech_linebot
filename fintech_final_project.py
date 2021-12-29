@@ -49,7 +49,7 @@ app = Flask(__name__)
 # handler = WebhookHandler(config.get('line-bot', 'channel_secret'))
 
 # 必須放上自己的Channel Access Token
-line_bot_api = LineBotApi(os.environ.get("channel_access_token"))
+line_bot_api = LineBotApi(os.environ.get("CHANNEL_ACCESS_TOKEN"))
 # 必須放上自己的Channel Secret
 handler = WebhookHandler(os.environ.get("channel_secret"))
 
