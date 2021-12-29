@@ -1,21 +1,16 @@
 # This is a basic workflow to help you get started with Actions
-
 name: CI
-
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-
 jobs:
-  secret-in-github-actions:
-  runs-on:
-    windows-latest
-  steps:
-    -name: step1
-      env:
-        CHANNEL_ACCESS_TOKEN: ${{secrets.CHANNEL_ACCESS_TOKEN}}
-        CHANNEL_SECRET: ${{CHANNEL_SECRET}}
-      if: env.CHANNEL_ACCESS_TOKEN='kiO7NFLfre4p/DYSzSC3tO9TcYfkX/W8z5y3l2NI0EVG4w1bGQnG25fgX6KVGLWvTcRIB1qAwhNz2Qkb8pkJDsHtI3A8enXRaSKTZ5kTOR7f5+NWAV1G4MlhTFxULYiSW6XZd+G49DvQhDpeiqrmSwdB04t89/1O/w1cDnyilFU='
-      run: echo "sucess!!"
+  secrets-in-github-actions:
+    runs-on: windows-latest
+    steps:
+      - name: step1
+        env:
+          CHANNEL_ACCESS_TOKEN: ${{secrets.CHANNEL_ACCESS_TOKEN}}
+          CHANNEL_SECRET: ${{CHANNEL_SECRET}}
+        
