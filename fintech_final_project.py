@@ -36,6 +36,8 @@ from sklearn import metrics
 import requests
 from bs4 import BeautifulSoup
 # import configparser
+from dotenv import dotenv_values
+load.dotenv()
 
 app = Flask(__name__)
 
@@ -49,9 +51,9 @@ app = Flask(__name__)
 # handler = WebhookHandler(config.get('line-bot', 'channel_secret'))
 
 # 必須放上自己的Channel Access Token
-line_bot_api = LineBotApi(os.environ.get("CHANNEL_ACCESS_TOKEN"))
+line_bot_api = LineBotApi(os.getenv("CHANNEL_ACCESS_TOKEN"))
 # 必須放上自己的Channel Secret
-handler = WebhookHandler(os.environ.get("CHANNEL_SECRET"))
+handler = WebhookHandler(os.getenv("CHANNEL_SECRET"))
 
 
 # 監聽所有來自 /callback 的 Post Request
