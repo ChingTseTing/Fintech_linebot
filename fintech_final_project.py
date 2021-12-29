@@ -35,14 +35,20 @@ from sklearn.metrics import mean_squared_error
 from sklearn import metrics
 import requests
 from bs4 import BeautifulSoup
+import configparser
 
 app = Flask(__name__)
 
+
+# LINE 聊天機器人的基本資料
+config = configparser.ConfigParser()
+config.read('config.ini')
 # 必須放上自己的Channel Access Token
-line_bot_api = LineBotApi('kiO7NFLfre4p/DYSzSC3tO9TcYfkX/W8z5y3l2NI0EVG4w1bGQnG25fgX6KVGLWvTcRIB1qAwhNz2Qkb8pkJDsHtI3A8enXRaSKTZ5kTOR7f5+NWAV1G4MlhTFxULYiSW6XZd+G49DvQhDpeiqrmSwdB04t89/1O/w1cDnyilFU=')
+line_bot_api = LineBotApi(config.get('line-bot', 'channel_access_token'))
 # 必須放上自己的Channel Secret
-handler = WebhookHandler('87723191543af71cbeb3eb10170ba058')
-# line_bot_api.push_message('U98f95fa0a1fd644fd3c8ce928f9f1eb4', TextSendMessage(text='你可以開始了'))
+handler = WebhookHandler(config.get('line-bot', 'channel_secret'))
+
+
 
 # 監聽所有來自 /callback 的 Post Request
 @app.route("/callback", methods=['POST'])
