@@ -30,5 +30,4 @@ jobs:
         env:
           CHANNEL_ACCESS_TOKEN: ${{secrets.CHANNEL_ACCESS_TOKEN}}
           CHANNEL_SECRET: ${{secrets.CHANNEL_SECRET}}
-        run: 
-          python -c 'import os ; print( os.environ["CHANNEL_SECRET"]=="87723191543af71cbeb3eb10170ba058" )'
+        
