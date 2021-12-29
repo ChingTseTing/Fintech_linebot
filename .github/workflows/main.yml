@@ -25,9 +25,6 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2          
       - name: step1
-        env:
-          CHANNEL_ACCESS_TOKEN: ${{secrets.CHANNEL_ACCESS_TOKEN}}
-          CHANNEL_SECRET: ${{secrets.CHANNEL_SECRET}}
         run: 
           CHANNEL_ACCESS_TOKEN=${{ secrets.CHANNEL_ACCESS_TOKEN }} 
           CHANNEL_SECRET=${{ secrets.CHANNEL_SECRET }} 
