@@ -25,9 +25,11 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2          
       - name: step1
-        run: 
+        env:
           CHANNEL_ACCESS_TOKEN=${{ secrets.CHANNEL_ACCESS_TOKEN }} 
-          CHANNEL_SECRET=${{ secrets.CHANNEL_SECRET }} 
+          CHANNEL_SECRET=${{ secrets.CHANNEL_SECRET }}
+        run: 
+        
           python -c 'import os;print(os.environ.get(CHANNEL_ACCESS_TOKEN)) ; print(os.environ.get(CHANNEL_SECRET))'
           
 
