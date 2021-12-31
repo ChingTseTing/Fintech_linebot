@@ -792,7 +792,8 @@ def phase_intermediate(event , TABLE_NAME ):
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     message = TextSendMessage(text=event.message.text)
-    
+    if event.message.text=="database":
+       line_bot_api.reply_message(event.reply_token, TextSendMessage(text= os.environ["DATABASE_URL"] )  )
     if len(get_stock(event.message.text ,'3y' ,'1d' ))!=0:
       phase_intermediate(event, 'your_table')
       
