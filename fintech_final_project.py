@@ -36,8 +36,8 @@ from sklearn import metrics
 import requests
 from bs4 import BeautifulSoup
 # import configparser
-from dotenv import load_dotenv
-load_dotenv()
+# from dotenv import load_dotenv
+# load_dotenv()
 
 app = Flask(__name__)
 
