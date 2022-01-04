@@ -792,7 +792,7 @@ def phase_intermediate(event , TABLE_NAME ):
 def handle_message(event):
     message = TextSendMessage(text=event.message.text)
   
-    if len(get_stock(event.message.text ,'3y' ,'1d' ))!=0:
+    if len(get_stock(event.message.text ,'3y' ,'1d' ))!=0  and event.message.text not in ["即時查詢","歷史資料","技術分析","機器學習預測","最新消息"]:
       phase_intermediate(event, 'your_table')
     else:
       line_bot_api.reply_message(event.reply_token, TextSendMessage(text= "找不到您所需的資料，更多代號請上yahoo奇摩股市查詢" )  )
