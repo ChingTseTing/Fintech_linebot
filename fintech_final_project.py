@@ -794,7 +794,9 @@ def handle_message(event):
   
     if len(get_stock(event.message.text ,'3y' ,'1d' ))!=0:
       phase_intermediate(event, 'your_table')
-      
+    else:
+      line_bot_api.reply_message(event.reply_token, TextSendMessage(text= "找不到您所需的資料，更多代號請上yahoo奇摩股市查詢" )  )
+        
    
 
 # postback event事件
@@ -812,8 +814,9 @@ def handle_postback(event):
       phase_start(event,"即時查詢" ,  'your_table' )
     if event.postback.data=="機器學習預測" :     
        phase_start(event,"機器學習預測" ,  'your_table' ) 
-
-    
+    if event.postback.data=="最新消息" :     
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text= "功能開發中,敬請期待" ) )
+        
     if event.postback.data.startswith('period=') or event.postback.data.startswith('interval=') or event.postback.data.startswith('indicator=') or event.postback.data.startswith('model='):
       phase_intermediate(event, 'your_table')
 
