@@ -237,7 +237,7 @@ def RF_model(record):
   RMSE = f'RMSE train:{metrics.mean_squared_error(y_train, y_train_pred , squared=False):.3f}  RMSE test:{metrics.mean_squared_error(y_test, y_test_pred , squared=False):.3f}'
   MAPE = f'MAPE train:{metrics.mean_absolute_percentage_error(y_train, y_train_pred):.3f}  MAPE test:{metrics.mean_absolute_percentage_error(y_test, y_test_pred):.3f}'
   MAE = f'MAE train:{metrics.mean_absolute_error(y_train, y_train_pred ):.3f}  MAE test:{metrics.mean_absolute_error(y_test, y_test_pred):.3f}'
-  MSE = f'MSE train:{metrics.mean_squared_error(y_train, y_train_pred ):.3f}  MAE test:{metrics.mean_squared_error(y_test, y_test_pred):.3f}'
+  MSE = f'MSE train:{metrics.mean_squared_error(y_train, y_train_pred ):.3f}  MSE test:{metrics.mean_squared_error(y_test, y_test_pred):.3f}'
   R_2 = f'R^2 train:{r2_score(y_train, y_train_pred ):.3f}  R^2 test:{r2_score(y_test, y_test_pred):.3f}'
   all = RMSE + "\n" + MAPE + "\n" + MAE + "\n" + MSE + "\n" +R_2 +"\n"+ "價格預測:" + str(forest.predict(prediction)[0])
   return all
@@ -803,8 +803,9 @@ def handle_postback(event):
 
     if event.postback.data=="即時查詢" :     
       phase_start(event,"即時查詢" ,  'your_table' )
-    if event.postback.data=="歷史資料" :     
-      phase_start(event,"歷史資料" ,  'your_table' )
+    if event.postback.data=="歷史資料" :
+      line_bot_api.reply_message(event.reply_token, TextSendMessage(text= "功能開發中,敬請期待" )  )
+#       phase_start(event,"歷史資料" ,  'your_table' )
     if event.postback.data=="技術分析" :     
       phase_start(event,"技術分析" ,  'your_table' )
     if event.postback.data=="即時查詢" :     
