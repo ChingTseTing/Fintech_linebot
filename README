@@ -1,5 +1,5 @@
 ##########################################################################################################
-#                                                                                                        #
+#                                 FINTECH PROJECT  你今天 line 股了嗎                                     #
 ##########################################################################################################
 
 
@@ -17,7 +17,7 @@ Bot server              ：開發 LINEBot 的 server。依據 webhook event，�
 
 檔案說明
 README                  : 說明文件
-fintech_final_project.py: 
+fintech_final_project.py: 主程式所在
 Procfile                : 告訴 Heroku 我們的應用程式是哪種類型，以及需要執行哪個檔案，
                           以LINEbot來說，是 web類型應用程式，project 中，需要執行 fintech_final_project.py這個主程式
 requirements.txt        : 告訴 Heroku 提供的伺服器需要安裝那些pytohn套件
