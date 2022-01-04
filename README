@@ -12,7 +12,7 @@ Heroku Postgres是 Heroku 提供的一種PostgreSQL資料庫, 我們額外建立
 用戶                    ：藉由 LINE APP 來發送訊息的使用者。發送訊息至 LINE 官方帳號。
 LINE Platform           ： LINE 官方用來傳遞「用戶」及「Bot server」資訊的中介 server。將一個 webhook 事件傳送至 bot server 的 webhook URL。
 Bot server              ：開發 LINEBot 的 server。依據 webhook event，透過 LINE Platform 回應用戶。
-*linebot 開發需遵守LINE官方所提供的 Messaging API 協議來進行開發
+*linebot 開發需遵守LINE官方所提供的 Messaging API 協議(HTTPS協定)來進行開發
 
 
 檔案說明
