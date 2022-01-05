@@ -47,3 +47,6 @@
                     "Bot server"資訊的中介server          Messaging API 協議(HTTPS協定) 進行溝通
                                                                 
 
+## 4.参考文章
+* https://marketingliveincode.com/?page_id=2532
+* https://ithelp.ithome.com.tw/users/20120178/ironman/2654
