@@ -73,7 +73,7 @@ demo 影片連結            : https://drive.google.com/drive/folders/1dFTDaoglc
 
 
 
-1.檔案說明
+## 1.檔案說明
    * README                  : 說明文件
    * fintech_final_project.py: 主程式所在
    * Procfile                : 告訴 Heroku 我們的應用程式是哪種類型，以及需要執行哪個檔案
@@ -82,7 +82,7 @@ demo 影片連結            : https://drive.google.com/drive/folders/1dFTDaoglc
    * richmenu_1.png          : 客製化的設定機器人聊天室介面功能選單, 除了在主程式裡設定按鈕在圖片上的相對位置及觸發事件,也要提供背景圖片
 
 
-2.環境搭建
+## 2.環境搭建
    * 從line Developer 為你的機器人註冊一個line官方帳號
         * Channel access token, Channel secret : API金鑰,是連接fintech_final_project.py跟機器人帳戶的關鍵
                                           安全性考量,兩個API金鑰並未寫死在fintech_final_project.py,而是放在機器人部屬在heroku
