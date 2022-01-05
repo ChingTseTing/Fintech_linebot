@@ -99,6 +99,10 @@ demo 影片連結            : https://drive.google.com/drive/folders/1dFTDaoglc
         * 是 Heroku 提供的一種PostgreSQL資料庫, 我們額外建立連結到heroku運作的伺服器，用來暫存使用者輸入的設定
         *直接在 Heroku 新增的伺服器中連結
 
+## 3.成果
+   * LINE id                 : @074vyxct
+   * Line 好友連結            : https://liff.line.me/1645278921-kWRPP32q/?accountId=074vyxct
+   * demo 影片連結            : https://drive.google.com/drive/folders/1dFTDaoglcOdrP-IqejkzuRyPFWAcXgnL?usp=sharing
 
  |        |<---------|                         |<---- 依據 webhook 事件 透過 LINE Platform 回應用戶 ------|                  | 
 
