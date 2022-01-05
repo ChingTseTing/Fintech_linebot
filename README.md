@@ -1,15 +1,4 @@
- _______            _________________________                                                            __________________
-|       |<---------|                         |<---- 依據 webhook 事件 透過 LINE Platform 回應用戶 ------|                  | 
-| User  |          |      LINE Platform      |                                                          |    Bot server    |
-|_______|--------->|_________________________|------ webhook 事件傳送至 bot server的 webhook URL ------>|__________________|
-                 
-                     LINE官方用來傳遞"user"及             server,server之間是根據LINE官方所提供的           開發LINEBot的server
-                    "Bot server"資訊的中介server          Messaging API 協議(HTTPS協定) 進行溝通
-                                                                
-
 # FINTECH PROJECT  你今天 line 股了嗎
-
-
 ## 1.檔案說明
  檔案|說明   
   ------------------------ | ---------------------------  
@@ -45,6 +34,14 @@
       https://drive.google.com/drive/folders/1dFTDaoglcOdrP-IqejkzuRyPFWAcXgnL?usp=sharing
 
         <---------&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<---- 依據 webhook 事件 透過 LINE Platform 回應用戶 ------                
- |  User  |          |      LINE Platform      |                                                          |    Bot server    |
+
 |________|--------->|__________________________|------ webhook 事件傳送至 bot server的 webhook URL ------>|__________________|
+ _______            _________________________                                                            __________________
+|       |<---------|                         |<---- 依據 webhook 事件 透過 LINE Platform 回應用戶 ------|                  | 
+| User  |          |      LINE Platform      |                                                          |    Bot server    |
+|_______|--------->|_________________________|------ webhook 事件傳送至 bot server的 webhook URL ------>|__________________|
+                 
+                     LINE官方用來傳遞"user"及             server,server之間是根據LINE官方所提供的           開發LINEBot的server
+                    "Bot server"資訊的中介server          Messaging API 協議(HTTPS協定) 進行溝通
+                                                                
 
