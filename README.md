@@ -46,5 +46,5 @@
 
         <---------&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<---- 依據 webhook 事件 透過 LINE Platform 回應用戶 ------                
  |  User  |          |      LINE Platform      |                                                          |    Bot server    |
-|_______|--------->|_________________________|------ webhook 事件傳送至 bot server的 webhook URL ------>|__________________|
+|________|--------->|__________________________|------ webhook 事件傳送至 bot server的 webhook URL ------>|__________________|
 
