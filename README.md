@@ -39,9 +39,7 @@
    * LINE id &nbsp;: 
       @074vyxct
    * Line 好友連結: 
-      https://liff.line.me/1645278921-kWRPP32q/?accountId=074vyxct
-      [Imgur]()
-      ![百度](https://i.imgur.com/YvQsNNe.png "百度一下")
+      ![Imgur](https://i.imgur.com/YvQsNNe.png)
 
    * demo 影片連結: 
       https://drive.google.com/drive/folders/1dFTDaoglcOdrP-IqejkzuRyPFWAcXgnL?usp=sharing
