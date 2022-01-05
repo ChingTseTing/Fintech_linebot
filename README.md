@@ -41,6 +41,8 @@
    * Line 好友連結: 
       https://liff.line.me/1645278921-kWRPP32q/?accountId=074vyxct
       [Imgur](https://i.imgur.com/YvQsNNe.png)
+      ![百度](https://www.baidu.com/img/bd_logo1.png "百度一下")
+
    * demo 影片連結: 
       https://drive.google.com/drive/folders/1dFTDaoglcOdrP-IqejkzuRyPFWAcXgnL?usp=sharing
 
