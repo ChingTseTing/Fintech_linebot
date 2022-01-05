@@ -100,6 +100,9 @@ demo 影片連結            : https://drive.google.com/drive/folders/1dFTDaoglc
         *直接在 Heroku 新增的伺服器中連結
 
 
+ |        |<---------|                         |<---- 依據 webhook 事件 透過 LINE Platform 回應用戶 ------|                  | 
+
+
 表格
   表頭|表頭   
   ------------- | -------------  
