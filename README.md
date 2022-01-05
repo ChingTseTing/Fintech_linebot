@@ -4,13 +4,13 @@
   ------------------------ | ---------------------------  
  README                     |   說明文件   
  fintech_final_project.py   |  主程式所在 
- Procfile                   |  告訴 Heroku 我們的應用程式是哪種類型，以及需要執行哪個檔案<br />, 以LINEbot來說，是 web類型應用程式，project 中，需要執行 fintech_final_project.py這個主程式
+ Procfile                   |  告訴 Heroku 我們的應用程式是哪種類型，以及需要執行哪個檔案<br /> 以LINEbot來說，是 web類型應用程式，project 中，需要執行 fintech_final_project.py這個主程式
  requirements.txt           | 告訴 Heroku 提供的伺服器需要安裝那些pytohn套件
- richmenu_1.png             | 客製化的設定機器人聊天室介面功能選單, 除了在主程式裡設定按鈕在圖片上的相對位置及觸發事件,也要提供背景圖片
+ richmenu_1.png             | 客製化的設定機器人聊天室介面功能選單<br />除了在主程式裡設定按鈕在圖片上的相對位置及觸發事件,也要提供背景圖片
 
 ## 2.環境搭建
 ### * 從line Developer 為你的機器人註冊一個line官方帳號
-   * Channel access token, Channel secret : API金鑰,是連接fintech_final_project.py跟機器人帳戶的關鍵
+   * Channel access token, Channel secret : API金鑰,是連接fintech_final_project.py跟機器人帳戶的關鍵<br />
                                           安全性考量,兩個API金鑰並未寫死在fintech_final_project.py,而是放在機器人部屬在heroku
                                           伺服器的環境變數空間
    * webhook URL                          : enable, 填入 https://你在heroku建立的伺服器名稱.herokuapp.com/callback
@@ -47,6 +47,9 @@
                     "Bot server"資訊的中介server          Messaging API 協議(HTTPS協定) 進行溝通
                                                                 
 &emsp;&emsp;<---------&emsp;&emsp;&emsp;&emsp;<---- 依據 webhook 事件 透過 LINE Platform 回應用戶 -----
+<br />
+&emsp;&emsp;--------->&emsp;&emsp;&emsp;&emsp;------ webhook 事件傳送至 bot server的 webhook URL ------>
+
 
 
 ## 4.参考文章
