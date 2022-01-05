@@ -38,12 +38,12 @@
    * 直接在 Heroku 新增的伺服器中連結
 
 ## 3.成果
-   * LINE id: 
+   * LINE id&nbsp;: 
       @074vyxct
    * Line 好友連結: 
       https://liff.line.me/1645278921-kWRPP32q/?accountId=074vyxct
    * demo 影片連結: 
       https://drive.google.com/drive/folders/1dFTDaoglcOdrP-IqejkzuRyPFWAcXgnL?usp=sharing
 
-        <---------              <---- 依據 webhook 事件 透過 LINE Platform 回應用戶 ------                
+        <---------&nbsp;&nbsp;<---- 依據 webhook 事件 透過 LINE Platform 回應用戶 ------                
 
