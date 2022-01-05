@@ -29,10 +29,10 @@ richmenu_1.png          : 客製化的設定機器人聊天室介面功能選單
    是 Heroku 提供的一種PostgreSQL資料庫, 我們額外建立連結到heroku運作的伺服器，用來暫存使用者輸入的設定
    直接在 Heroku 新增的伺服器中連結
 
-  ________               _________________________                                                          __________________
+  ________               _________________________                                                            __________________
  |        |<------------|                         |<---- 依據 webhook 事件 透過 LINE Platform 回應用戶 ------|                  | 
- |  User  |             |      LINE Platform      |                                                        |    Bot server    |
- |________|------------>|_________________________|------ webhook 事件傳送至 bot server的 webhook URL------>|__________________|
+ |  User  |             |      LINE Platform      |                                                         |    Bot server    |
+ |________|------------>|_________________________|------ webhook 事件傳送至 bot server的 webhook URL-- ---->|__________________|
                  
                         LINE官方用來傳遞"user"及             server,server之間是根據LINE官方所提供的           開發LINEBot的server
                        "Bot server"資訊的中介server          Messaging API 協議(HTTPS協定) 進行溝通
