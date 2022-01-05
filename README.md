@@ -53,7 +53,7 @@
 
 &nbsp;**______**&nbsp;&ensp;&emsp;&emsp;&emsp;&emsp;**________________** <br />
 | &emsp;&emsp; |<---------| &nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;|<---- 依據 webhook 事件 透過 LINE Platform 回應用戶 ------|<br />
-| User | &emsp;&emsp;&emsp;&emsp;| LINE Platform | &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | Bot server |<br />
+| User | &emsp;&emsp;&emsp;&emsp;| LINE Platform | &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | Bot server |<br />
 |**______**|--------->|**________________**|------ webhook 事件傳送至 bot server的 webhook URL ------>|**__________**| <br />
 
 
