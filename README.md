@@ -35,7 +35,7 @@
 &emsp;&emsp;&emsp;&emsp;"Bot server"資訊的中介server&emsp;&emsp;&emsp;Messaging API 協議(HTTPS協定) 進行溝通
 
 
-## 3.成果
+## 3.使用方式
    * LINE id &nbsp;: 
       @074vyxct
    * Line 好友連結: 
