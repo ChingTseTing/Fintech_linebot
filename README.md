@@ -25,28 +25,6 @@
    * 是 Heroku 提供的一種PostgreSQL資料庫, 我們額外建立連結到heroku運作的伺服器，用來暫存使用者輸入的設定
    * 直接在 Heroku 新增的伺服器中連結
 
-## 3.成果
-   * LINE id &nbsp;: 
-      @074vyxct
-   * Line 好友連結: 
-      https://liff.line.me/1645278921-kWRPP32q/?accountId=074vyxct
-   * demo 影片連結: 
-      https://drive.google.com/drive/folders/1dFTDaoglcOdrP-IqejkzuRyPFWAcXgnL?usp=sharing
-
-        <---------&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<---- 依據 webhook 事件 透過 LINE Platform 回應用戶 ------                
-
-|________|--------->|__________________________|------ webhook 事件傳送至 bot server的 webhook URL ------>|__________________|
- _______            _________________________                                                            __________________
-|       |<---------|                         |<---- 依據 webhook 事件 透過 LINE Platform 回應用戶 ------|                  | 
-| User  |          |      LINE Platform      |                                                          |    Bot server    |
-
-<---------                         <---- 依據 webhook 事件 透過 LINE Platform 回應用戶 ------
-        --------->                         ------ webhook 事件傳送至 bot server的 webhook URL ------>
-                 
-
-
-
-
 
 
 &nbsp;**______**&nbsp;&ensp;&emsp;&emsp;&emsp;&emsp;**________________** &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;**____________**<br />
@@ -54,11 +32,17 @@
 | User | &emsp;&emsp;&emsp;&emsp;| LINE Platform | &nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | Bot server |<br />
 |**______**|--------->|**________________**|------ webhook 事件傳送至 bot server的 webhook URL ----->|**____________**| <br />
 
-&emsp;&emsp;&emsp;&emsp;LINE官方用來傳遞"user"及&emsp;&emsp;&emsp;server,server之間是根據LINE官方所提供的&emsp;&emsp;&emsp;開發LINEBot的server <br />
+&emsp;&emsp;&emsp;&emsp;LINE官方用來傳遞"user"及&emsp;&emsp;&emsp;&emsp;server,server之間是根據LINE官方所提供的&emsp;&emsp;&emsp;開發LINEBot的server <br />
 &emsp;&emsp;&emsp;&emsp;"Bot server"資訊的中介server&emsp;&emsp;&emsp;Messaging API 協議(HTTPS協定) 進行溝通
 
 
-
+## 3.成果
+   * LINE id &nbsp;: 
+      @074vyxct
+   * Line 好友連結: 
+      https://liff.line.me/1645278921-kWRPP32q/?accountId=074vyxct
+   * demo 影片連結: 
+      https://drive.google.com/drive/folders/1dFTDaoglcOdrP-IqejkzuRyPFWAcXgnL?usp=sharing
 
 ## 4.参考文章
 * https://marketingliveincode.com/?page_id=2532
