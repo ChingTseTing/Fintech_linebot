@@ -47,7 +47,7 @@
                     "Bot server"資訊的中介server          Messaging API 協議(HTTPS協定) 進行溝通
                                                                 
 &emsp;&emsp;<---------&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<---- 依據 webhook 事件 透過 LINE Platform 回應用戶 -----<br />
-User&emsp;&emsp;&emsp;&emsp;LINE Platform<br />
+User&emsp;&emsp;&emsp;&emsp;&emsp;LINE Platform<br />
 &emsp;&emsp;--------->&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;------ webhook 事件傳送至 bot server的 webhook URL ------>
 
 
