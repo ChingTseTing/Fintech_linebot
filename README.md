@@ -54,7 +54,7 @@
 | User | &emsp;&emsp;&emsp;&emsp;| LINE Platform | &nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | Bot server |<br />
 |**______**|--------->|**________________**|------ webhook 事件傳送至 bot server的 webhook URL ----->|**____________**| <br />
 
-&emsp;&emsp;&emsp;&emsp;LINE官方用來傳遞"user"及&emsp;&emsp;server,server之間是根據LINE官方所提供的&emsp;&emsp;&emsp;開發LINEBot的server <br />
+&emsp;&emsp;&emsp;&emsp;LINE官方用來傳遞"user"及&emsp;&emsp;&emsp;server,server之間是根據LINE官方所提供的&emsp;&emsp;&emsp;開發LINEBot的server <br />
 &emsp;&emsp;&emsp;&emsp;"Bot server"資訊的中介server&emsp;&emsp;&emsp;Messaging API 協議(HTTPS協定) 進行溝通
 
 
