@@ -41,3 +41,50 @@ richmenu_1.png          : 客製化的設定機器人聊天室介面功能選單
 LINE id                 : @074vyxct
 Line 好友連結            : https://liff.line.me/1645278921-kWRPP32q/?accountId=074vyxct
 demo 影片連結            : https://drive.google.com/drive/folders/1dFTDaoglcOdrP-IqejkzuRyPFWAcXgnL?usp=sharing
+
+
+1標題與文字格式 
+標題
+# 這是H1 <一級標題>
+## 這是H2 <二級標題>
+###### 這是H6 <六級標題>
+文字格式
+**這是文字粗體格式**
+*這是文字斜體格式*
+~~在文字上添加刪除線~~ 
+ 
+2列表 
+無序列表
+*項目1 
+*項目2 
+*項目3 
+有序列表
+1.項目1 
+2.項目2 
+3.項目3 
+   *項目1 
+   *項目2  
+ 
+3其它 
+圖片
+![圖片名稱]( http : //gitcafe.com/image.png)
+鏈接
+[鏈接名稱]( http : //gitcafe.com)
+引用
+>第一行引用文字 
+>第二行引用文字 
+水平線
+***
+代碼
+`<hello world>`
+代碼塊高亮
+```ruby
+  def add(a, b)
+    return a + b
+  end
+```
+表格
+  表頭|表頭   
+  ------------- | -------------  
+ 單元格內容|單元格內容   
+ 單元格內容l   |單元格內容 
