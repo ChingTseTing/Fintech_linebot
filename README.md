@@ -4,7 +4,7 @@
   ------------------------ | ---------------------------  
  README                     |   說明文件   
  fintech_final_project.py   |  主程式所在 
- Procfile                   |  告訴 Heroku 我們的應用程式是哪種類型，以及需要執行哪個檔案, 以LINEbot來說，是 web類型應用程式，project 中，需要執行 fintech_final_project.py這個主程式
+ Procfile                   |  告訴 Heroku 我們的應用程式是哪種類型，以及需要執行哪個檔案<br />, 以LINEbot來說，是 web類型應用程式，project 中，需要執行 fintech_final_project.py這個主程式
  requirements.txt           | 告訴 Heroku 提供的伺服器需要安裝那些pytohn套件
  richmenu_1.png             | 客製化的設定機器人聊天室介面功能選單, 除了在主程式裡設定按鈕在圖片上的相對位置及觸發事件,也要提供背景圖片
 
