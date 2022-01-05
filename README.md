@@ -36,9 +36,7 @@
 
 
 ## 3.使用方式
-   * LINE id &nbsp;: 
-      @074vyxct
-   * Line 好友連結:  <br />
+   * Line 好友連結 (LINE id : @074vyxct)  <br />
       ![Imgur](https://i.imgur.com/YvQsNNe.png)
 
    * demo 影片連結: 
