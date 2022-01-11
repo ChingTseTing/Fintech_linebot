@@ -44,3 +44,4 @@
 ## 4.参考文章
 * https://marketingliveincode.com/?page_id=2532
 * https://ithelp.ithome.com.tw/users/20120178/ironman/2654
+* https://line-bot-sdk-python.readthedocs.io/en/stable/index.html
